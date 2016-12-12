@@ -40,6 +40,7 @@ nobase_include_HEADERS = ${top_srcdir}/ccec/include/ccec/Assert.hpp \
                         ${top_srcdir}/ccec/include/ccec/MessageProcessor.hpp \
                         ${top_srcdir}/ccec/include/ccec/Operand.hpp \
                         ${top_srcdir}/ccec/include/ccec/driver/hdmi_cec_driver.h \
+                        ${top_srcdir}/ccec/drivers/include/ccec/drivers/iarmbus/CecIARMBusMgr.h \
 			${top_srcdir}/osal/include/osal/Condition.hpp \
                         ${top_srcdir}/osal/include/osal/EventQueue.hpp \
                         ${top_srcdir}/osal/include/osal/Mutex.hpp \

@@ -183,6 +183,7 @@ CECIARMMgr & CECIARMMgr::getInstance(void)
 IARM_Result_t CECIARMMgr::init(void)
 {
     started = false;
+    IARM_Result_t retVal = IARM_RESULT_SUCCESS;
     IARM_Bus_Init(IARM_BUS_CECMGR_NAME);
     IARM_Bus_Connect();
     IARM_Bus_RegisterEvent(IARM_BUS_CECMGR_EVENT_MAX);
@@ -192,6 +193,15 @@ IARM_Result_t CECIARMMgr::init(void)
     IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_ENABLE, cecMgrEventHandler);
     IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_SEND, cecSendEventHandler);
     IARM_Bus_RegisterEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_HDMI_HOTPLUG, _iarmMgrHdmiEventHandler);
+
+    IARM_Bus_CECMgr_EventData_t initData;
+    memset(&initData, 0, sizeof(initData));
+    retVal = IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_DAEMON_INITIALIZED,(void *)&initData, sizeof(initData));
+    if(IARM_RESULT_SUCCESS != retVal)
+    {
+        CCEC_LOG( LOG_ERROR, "IARM Broadcast event failed at %s error code : %d  \r\n", __FUNCTION__, retVal);
+    }
+
     return IARM_RESULT_SUCCESS;
 }
 

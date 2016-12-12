@@ -38,7 +38,7 @@
 extern "C" 
 {
 #endif
-#define IARM_BUS_CECMGR_NAME 						"CECMgr" /*!< IR Manager IARM -bus name */
+#define IARM_BUS_CECMGR_NAME                         "CECMgr" /*!< CEC Manager IARM-bus name */
 #define IARM_BUS_CECMGR_MAX_DATA_LENGTH              62
 #define IARM_BUS_CECMGR_API_Enable                   "Enable"
 #define IARM_BUS_CECMGR_API_Send                     "Send"
@@ -49,8 +49,9 @@ typedef enum _CECMgr_EventId_t {
 	IARM_BUS_CECMGR_EVENT_SEND,           /*!< Request to Send CEC Data         */
 	IARM_BUS_CECMGR_EVENT_RECV,           /*!< Notify Availability of CEC Data  */
 	IARM_BUS_CECMGR_EVENT_ENABLE,         /*!< Notify Enable/Disable of CEC Driver  */
-    IARM_BUS_CECMGR_EVENT_MAX,             /*!< Maximum event id*/
-} IARM_Bus_IRMgr_EventId_t;
+	IARM_BUS_CECMGR_EVENT_DAEMON_INITIALIZED,    /*!< Notify  CEC Daemon initialized  */
+        IARM_BUS_CECMGR_EVENT_MAX,             /*!< Maximum event id*/
+} IARM_Bus_CECMgr_EventId_t;
 
 typedef enum _CECMgr_DataDirection_t {
 	IAMR_BUS_CECMGR_DATADIRECTION_SEND,
