@@ -18,13 +18,19 @@
 */
 
 
-
 /**
 * @defgroup hdmicec
 * @{
 * @defgroup host
 * @{
 **/
+
+/**
+ * @defgroup hdmi_host HDMI-CEC Host
+ * @ingroup HDMI_CEC
+ * @ingroup hdmi_host
+ * @{
+ */
 
 
 #include <dlfcn.h>
@@ -80,6 +86,14 @@ static IARM_Result_t _GetDevStatus(void *arg);
 static void _hdmiEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len);
 static void _powerEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len);
 
+/**
+ * @brief This function is used to initialize CEC host device by registering
+ * event handlers and calls like status, name etc.
+ *
+ * @param[in] name OSD name.
+ *
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ */
 CECHost_Err_t CECHost_Init(const char *name)
 {
 	IARM_Bus_Init(IARM_BUS_CECHOST_NAME);
@@ -111,6 +125,12 @@ CECHost_Err_t CECHost_Init(const char *name)
     return CECHost_ERR_NONE;
 }
 
+/**
+ * @brief This function is used to de-initialize CEC host device, disconnects
+ * and terminates the CEC connection.
+ *
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ */
 CECHost_Err_t CECHost_Term(void)
 {
     device::Manager::DeInitialize();
@@ -121,12 +141,33 @@ CECHost_Err_t CECHost_Term(void)
 	return CECHost_ERR_NONE;
 }
 
+/**
+ * @brief This function is used to set the callback function. It is called by
+ * Device Manager application to set Dev manager status, OSD name, hot plug event
+ * handler, power state event handler etc.
+ *
+ * @param[in] cb CECHost_Callback_t type structure.
+ *
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ */
 CECHost_Err_t CECHost_SetCallback(CECHost_Callback_t cb)
 {
 	hostCb = cb;
 	return CECHost_ERR_NONE;
 }
 
+/**
+ * @brief This function is used to get the physical address of the HDMI output
+ * port byte by byte.
+ *
+ * @param[out] byte0 First byte of physical address.
+ * @param[out] byte1 Second byte of physical address.
+ * @param[out] byte2 Third byte of physical address.
+ * @param[out] byte3 Fourth byte of physical address.
+ *
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ * @retval CECHost_ERR_STATE Returns on error condition.
+ */
 CECHost_Err_t CECHost_GetHdmiOuputPhysicalAddress(uint8_t *byte0, uint8_t *byte1, uint8_t *byte2, uint8_t *byte3)
 {
 	/* Use DS */
@@ -149,6 +190,15 @@ CECHost_Err_t CECHost_GetHdmiOuputPhysicalAddress(uint8_t *byte0, uint8_t *byte1
 	return CECHost_ERR_NONE;
 }
 
+/**
+ * @brief This function is used to check whether the HDMI output is connected
+ * or not.
+ *
+ * @param[out] connect State of connection, 1 for connected and 0 for not connected..
+ *
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ * @retval CECHost_ERR_HOST Returns on fail condition.
+ */
 CECHost_Err_t CECHost_IsHdmiOutputConnected(int32_t *connect)
 {
 	/* Use DS */
@@ -170,7 +220,15 @@ CECHost_Err_t CECHost_IsHdmiOutputConnected(int32_t *connect)
 	return CECHost_ERR_NONE;
 }
 
-
+/**
+ * @brief This function is used to get the state of power whether it is ON or
+ * in STANDBY state.
+ *
+ * @param[out] state State of power, ON or STANDBY.
+ *
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ * @retval CECHost_ERR_HOST Returns on fail condition.
+ */
 CECHost_Err_t CECHost_GetPowerState(int32_t *state)
 {
 	IARM_Bus_PWRMgr_GetPowerState_Param_t param;
@@ -182,6 +240,17 @@ CECHost_Err_t CECHost_GetPowerState(int32_t *state)
 	CCEC_LOG( LOG_WARN, "CECHost_GetPowerState has state %d\r\n", *state);
 	return ret == IARM_RESULT_SUCCESS ? CECHost_ERR_NONE : CECHost_ERR_HOST;
 }
+
+/**
+ * @brief This function is used to set and update the device status like power
+ * status, logical address, osd name etc based on status type.
+ *
+ * @param[in] logicalAddress Logical address of cec device.
+ * @param[in] devices CECHost_DeviceStatus_t type pointer containing info about
+ * device.
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ * @retval CECHost_ERR_HOST Returns on fail condition.
+ */
 CECHost_Err_t CECHost_SetDeviceStatus(int logicalAddress, CECHost_DeviceStatus_t *devices)
 {
 	IARM_Bus_CECHost_DeviceStatusChanged_EventData_t eventData;
@@ -237,6 +306,14 @@ CECHost_Err_t CECHost_SetDeviceStatus(int logicalAddress, CECHost_DeviceStatus_t
 	return ret == IARM_RESULT_SUCCESS ? CECHost_ERR_NONE : CECHost_ERR_HOST;
 }
 
+/**
+ * @brief This function is used to set the device power state to be ON or STANDBY.
+ *
+ * @param[in] state Power state value to be updated.
+
+ * @retval CECHost_ERR_NONE Returns for successful condition.
+ * @retval CECHost_ERR_HOST Returns on fail condition.
+ */
 CECHost_Err_t CECHost_SetPowerState(int32_t state)
 {
 	IARM_Bus_PWRMgr_SetPowerState_Param_t param;
@@ -245,14 +322,15 @@ CECHost_Err_t CECHost_SetPowerState(int32_t state)
 	return ret == IARM_RESULT_SUCCESS ? CECHost_ERR_NONE : CECHost_ERR_HOST;
 }
 
-/*
- * Description: Return the OSD name of Host module.
+/**
+ * @brief This function is used to get OSD name of Host module. Here 'buf' need not
+ * to be null terminated. If it is, the 'len' does not include the 'null' termintator.
  *
- * The 'name' need not be null terminated. if it is, the 'len' does
- * not include the 'null' termintator.
+ * @param[in] buf The ASCII bytes of the OSD name
+ * @param[in] len The number of ASCII bytes.
  *
- * @param name: the ASCII bytes of the OSD name.
- * @param len:  the number of ASCII bytes.
+ * @retval CECHost_ERR_NONE Returns for success condition.
+ * @retval CECHost_ERR_INVALID Returns for failure condition.
  */
 CECHost_Err_t CECHost_GetOSDName(uint8_t *buf, size_t *len)
 {
@@ -266,6 +344,13 @@ CECHost_Err_t CECHost_GetOSDName(uint8_t *buf, size_t *len)
     return CECHost_ERR_NONE;
 }
 
+/**
+ * @brief This function is used to check whether host device is active or not.
+ *
+ * @param[out] active Variable that stores the state of box.
+ *
+ * @retval CECHost_ERR_NONE By default it returns success condition.
+ */
 CECHost_Err_t CECHost_IsActive(int32_t *active)
 {
 	/* Logic to determine if a box is activeSource
@@ -412,5 +497,6 @@ static void _powerEventHandler(const char *owner, IARM_EventId_t eventId, void *
 
 
 
+/** @} */
 /** @} */
 /** @} */

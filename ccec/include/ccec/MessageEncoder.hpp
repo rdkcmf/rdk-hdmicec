@@ -37,6 +37,12 @@
 
 CCEC_BEGIN_NAMESPACE
 
+/**
+ * @brief High-level messages are encoded by the MessageEncoder into raw bytes and placed in a CECFrame.
+ *
+ * A CECFrame is then sent out via an opened connection.
+ * @ingroup HDMI_CEC_MSG_N_FRAME_CLASSES
+ */
 class MessageEncoder {
 
 public:

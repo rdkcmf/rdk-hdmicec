@@ -19,11 +19,11 @@
 
 
 /**
-* @defgroup hdmicec
-* @{
-* @defgroup ccec
-* @{
-**/
+ * @defgroup hdmicec
+ * @{
+ * @defgroup ccec
+ * @{
+ **/
 
 
 #ifndef HDMI_CCEC_MESSAGE_DECODER_HPP_
@@ -36,6 +36,12 @@ CCEC_BEGIN_NAMESPACE
 class MessageProcessor;
 class CECFrame;
 
+/**
+ * @brief When receiving the message, the raw bytes arrived in a CECFrame are converted to the
+ * corresponding High-level message by MessageDecoder and then dispatched for processing via class
+ * MessageProcessor or its extensions.
+ * @ingroup HDMI_CEC_MSG_N_FRAME_CLASSES
+ */
 class MessageDecoder
 {
 public:

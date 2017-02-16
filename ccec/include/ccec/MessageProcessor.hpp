@@ -36,6 +36,25 @@
 
 CCEC_BEGIN_NAMESPACE
 
+/**
+ * @brief The MessageProcessor class implements a set of overloaded process() methods, with each handling a specific message type.
+ *
+ * When a CEC frame is received, the MessageDecoder converts the raw bytes into a message object and invoke the
+ * corresponding process() function.
+ * @n @n
+ * Application that desires to process certain CEC messages should extend MessageProcessor class and provide customized
+ * implementation of the overloaded process() method. The default processing in the base class is simply discarding the message
+ * (and by doing so, serves as a message filter for the application).
+ * @n @n
+ * Here is an example code that sends an ActiveSource message by a Tuner device,
+ * @code
+ * CECFrame frame = (MessageEncoder().encode(
+ *     Header(LogicalAddress(TUNER_1), LogicalAddress(TV)),
+ *        ActiveSource(PhysicalAddress(phy0, phy1, phy2, phy3)));
+ * Connection(LogicalAddress(TUNER_1)).send(frame);
+ * @endcode
+ * @ingroup HDMI_CEC_MSG_N_FRAME_CLASSES
+ */
 class MessageProcessor
 {
 public:

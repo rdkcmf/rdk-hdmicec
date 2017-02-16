@@ -55,7 +55,12 @@ static int cec_log_level = LOG_INFO;
                             (int)__tv.tv_usec);                                      \
 } while(0)
 
-
+/**
+ * @brief This function is used to get the cec log from the log file and checks
+ * the level of log received.
+ *
+ * @return None
+ */
 void check_cec_log_status(void)
 {
     struct stat st;
@@ -91,6 +96,16 @@ void check_cec_log_status(void)
 }
 
 char _CEC_LOG_PREFIX[64];
+
+/**
+ * @brief This function is used to gets the logs depending on the level of log
+ * and print these to standard output.
+ *
+ * @param[in] level CEC Log level
+ * @param[in] format Format of the received data.
+ *
+ * @return None
+ */
 void CCEC_LOG(int level, const char * format ...)
 {
     if ((level < LOG_MAX) && (level <= cec_log_level))
@@ -104,6 +119,15 @@ void CCEC_LOG(int level, const char * format ...)
     }
 }
 
+/**
+ * @brief This function is used to print the content of log buffer in hexadecimal
+ * format.
+ *
+ * @param[in] buf Buffer where CEC log is stored.
+ * @param[in] len Length of the buffer to be printed.
+ *
+ * @return None.
+ */
 void dump_buffer(unsigned char * buf, int len)
 {
     if((cec_log_level < LOG_MAX) && (cec_log_level >= LOG_DEBUG))

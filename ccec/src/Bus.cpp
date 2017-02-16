@@ -26,6 +26,13 @@
 * @{
 **/
 
+/**
+ * @defgroup hdmi_bus HDMI-CEC BUS
+ * @ingroup HDMI_CEC
+ * @addtogroup hdmi_bus
+ * @{
+ */
+
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -43,12 +50,23 @@ using CCEC_OSAL::Thread;
 
 CCEC_BEGIN_NAMESPACE
 
+/**
+ * @brief This function is used to create the instance of Bus class.
+ *
+ * @return instance Instance of the Bus class.
+ */
 Bus & Bus::getInstance(void)
 {
 	static Bus instance;
 	return instance;
 }
 
+/**
+ * @brief This function is a constructor for the class Bus. It is used to starts
+ * the read and write thread which creates its instance.
+ *
+ * @return None
+ */
 Bus::Bus(void) : reader(*this), writer(*this)
 {
 	CCEC_LOG( LOG_DEBUG, "Bus Instance Created\r\n");
@@ -57,6 +75,11 @@ Bus::Bus(void) : reader(*this), writer(*this)
 	CCEC_LOG( LOG_DEBUG, "Bus Instance DONE\r\n");
 }
 
+/**
+ * @brief This function starts the threads and gets the instance for Bus.
+ *
+ * @return None
+ */
 void Bus::start(void)
 {AutoLock rlock_(rMutex), wlock_(wMutex);
 	CCEC_LOG( LOG_INFO, "Bus::start is called \r\n");
@@ -74,6 +97,12 @@ void Bus::start(void)
 	started = true;
 }
 
+/**
+ * @brief This function stops the reader & writer threads and removes the
+ * instance for Bus.
+ *
+ * @return None
+ */
 void Bus::stop(void)
 {AutoLock rlock_(rMutex), wlock_(wMutex);
 
@@ -86,6 +115,12 @@ CCEC_LOG( LOG_INFO, "Bus::stop is called\r\n");
 	Driver::getInstance().close();
 }
 
+/**
+ * @brief This is a destructor for class BUS. This function initiates the closing
+ * of threads and the instance for Bus will be freed.
+ *
+ * @return None
+ */
 Bus::~Bus(void)
 {
 	Assert(!started);
@@ -97,6 +132,12 @@ Bus::~Bus(void)
 
 }
 
+/**
+ * @brief This function is used to read CECFrame from the driver. This gets
+ * notified to the frameListener which is listening for frames in CEC bus.
+ *
+ * @return None
+ */
 void Bus::Reader::run(void)
 {
 	CECFrame frame;
@@ -128,6 +169,13 @@ void Bus::Reader::run(void)
 	stopCompleted();
 }
 
+/**
+ * @brief This function is used to stop the reader to read frames from the bus.
+ *
+ * @param[in] block State of Reader.
+ *
+ * @return None
+ */
 void Bus::Reader::stop(bool block)
 {
 	CCEC_LOG( LOG_INFO, "Bus::Reader::stop::stop Entering [%d]\r\n", block);
@@ -147,6 +195,13 @@ void Bus::Reader::stop(bool block)
 	}
 }
 
+/**
+ * @brief This function is used to add new listener for reading frames.
+ *
+ * @param[in] listener Struct pointer for the addition of listener.
+ *
+ * @return None
+ */
 void Bus::addFrameListener(FrameListener *listener)
 {
 	{AutoLock lock_(rMutex);
@@ -155,6 +210,13 @@ void Bus::addFrameListener(FrameListener *listener)
 	}
 }
 
+/**
+ * @brief This function is used to remove the listener.
+ *
+ * @param[in] listener Struct pointer of a listener which is to be removed.
+ *
+ * @return None
+ */
 void Bus::removeFrameListener(FrameListener *listener)
 {
 	{ AutoLock lock_(rMutex);
@@ -164,6 +226,12 @@ void Bus::removeFrameListener(FrameListener *listener)
 
 }
 
+/**
+ * @brief This function is used to poll the bus for frame availability and it
+ * writes the CEC frame to the driver.
+ *
+ * @return None
+ */
 void Bus::Writer::run(void)
 {
 	CECFrame frame;
@@ -213,6 +281,14 @@ void Bus::Writer::run(void)
 	stopCompleted();
 }
 
+/**
+ * @brief This function is used to stop the writer for polling the bus and writing
+ * to the driver.
+ *
+ * @param[in] block State of Writer.
+ *
+ * @return None
+ */
 void Bus::Writer::stop(bool block)
 {
 	CCEC_LOG( LOG_INFO, "Bus::Writer::stop::stop Entering [%d]\r\n", block);
@@ -234,6 +310,15 @@ void Bus::Writer::stop(bool block)
 	}
 }
 
+/**
+ * @brief This function is used to write the frame to the driver. If it fails,
+ * as it is a synchronous function, it retries every 250ms till the retry count lapse.
+ *
+ * @param[in] frame CEC frame to be sent.
+ * @param[in] timeout Time period for retrying.
+ *
+ * @return None
+ */
 void Bus::send(const CECFrame &frame, int timeout)
 {
 	{AutoLock rlock_(rMutex), wlock_(wMutex);
@@ -274,6 +359,14 @@ void Bus::send(const CECFrame &frame, int timeout)
 	}
 }
 
+/**
+ * @brief This function is used to keep asynchronously sending the frame by
+ * keeping copy of cec frame in the queue of the driver.
+ *
+ * @param[in] frame CEC frame which need to be sent asynchronously.
+ *
+ * @return None
+ */
 void Bus::sendAsync(const CECFrame &frame)
 {
 	{AutoLock lock_(wMutex);
@@ -290,5 +383,6 @@ void Bus::sendAsync(const CECFrame &frame)
 CCEC_END_NAMESPACE
 
 
+/** @} */
 /** @} */
 /** @} */

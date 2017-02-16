@@ -48,6 +48,12 @@ CCEC_BEGIN_NAMESPACE
 class Bus;
 class CECFrame;
 
+/**
+ * @brief The connection class provides APIs that allows the application to access CEC Bus.
+ * A connection is a tap into the CEC bus. The application can use a connection to send raw bytes
+ * (in form of CECFrame) onto CEC bus or receive raw bytes from it.
+ * @ingroup HDMI_CEC_CONNECTION
+ */
 class Connection
 {
 public:

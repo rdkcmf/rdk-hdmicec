@@ -50,12 +50,26 @@ Connection::~Connection(void) {
 
 }
 
+/**
+ * @brief Open a connection to receive CEC packets from the bus.
+ *
+ * When a connection is opened without a given logical address this connection will pick up all messages destined
+ * to the host device, regardless what roles the device has. This is useful if the application wants to sniff all available
+ * CEC packets from the bus.
+ *
+ * @return None.
+ */
 void Connection::open(void)
 {
 	CCEC_LOG( LOG_DEBUG, "Connection::open with source [%s]\r\n", source.toString().c_str());
 	bus.addFrameListener(&busFrameListener);
 }
 
+/**
+ * brief Close the CEC connection from bus so that the application will stop receiving CEC packets from the bus.
+ *
+ * @return None.
+ */
 void Connection::close(void)
 {
 	{AutoLock lock_(mutex);
@@ -64,6 +78,13 @@ void Connection::close(void)
 	bus.removeFrameListener(&busFrameListener);
 }
 
+/**
+ * @brief This function is used to listen for CECFrame, which is a byte stream that contains raw bytes received from CEC bus.
+ *
+ * @param[in] listener A listener structure which need be added in the frameListeners Queue.
+ *
+ * @return None.
+ */
 void Connection::addFrameListener(FrameListener *listener)
 {
 	{AutoLock lock_(mutex);
@@ -73,6 +94,13 @@ void Connection::addFrameListener(FrameListener *listener)
 
 }
 
+/**
+ * @brief This function is used to remove the listener information from the queue.
+ *
+ * @param[in] listener Address of the pointer which need to be removed from the Queue.
+ *
+ * @return None.
+ */
 void Connection::removeFrameListener(FrameListener *listener)
 {
 	{ AutoLock lock_(mutex);
@@ -81,6 +109,15 @@ void Connection::removeFrameListener(FrameListener *listener)
 
 }
 
+/**
+ * @brief This function is used to send CEC frame to CEC Bus.
+ *
+ * @param[in] to Logical address of the connection where CEC frame can be sent.
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ * @param[in] timeout It is an upper bound on the amount of time to wait so that the application will not hang during sending.
+ *
+ * @return None.
+ */
 void Connection::sendTo(const LogicalAddress &to, const CECFrame &frame, int timeout)
 {
 	CCEC_LOG( LOG_DEBUG, "Sending out from Connection\r\n");
@@ -91,6 +128,16 @@ void Connection::sendTo(const LogicalAddress &to, const CECFrame &frame, int tim
 	send(fullFrame, timeout);
 }
 
+/**
+ * @brief This function is used to send CEC frame to CEC Bus.
+ *
+ * @param[in] to Logical address of the connection where CEC frame can be sent.
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ * @param[in] timeout It is an upper bound on the amount of time to wait so that the application will not hang during sending.
+ * @param[in] doThrow Throw an exception if the CEC frame is unable to send.
+ *
+ * @return None.
+ */
 void Connection::sendTo(const LogicalAddress &to, const CECFrame &frame, int timeout, const Throw_e &doThrow)
 {
 	CCEC_LOG( LOG_DEBUG, "Sending out from Connection\r\n");
@@ -109,6 +156,14 @@ void Connection::sendTo(const LogicalAddress &to, const CECFrame &frame, int tim
 	}
 }
 
+/**
+ * @brief sends HDMI-CEC frame to CEC Bus using asynchronized method.
+ *
+ * @param[in] to Logical address of the connection where CEC frame can be sent.
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ *
+ * @return None.
+ */
 void Connection::sendToAsync(const LogicalAddress &to, const CECFrame &frame)
 {
 	CECFrame fullFrame;
@@ -118,6 +173,14 @@ void Connection::sendToAsync(const LogicalAddress &to, const CECFrame &frame)
 	sendAsync(fullFrame);
 }
 
+/**
+ * @brief This function is used to send CEC frame to CEC Bus.
+ *
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ * @param[in] timeout It is an upper bound on the amount of time to wait so that the application will not hang during sending.
+ *
+ * @return None.
+ */
 void Connection::send(const CECFrame &frame, int timeout)
 {
 	CCEC_LOG( LOG_DEBUG, "Sending out from Connection with timeout %d ms\r\n", timeout);
@@ -133,6 +196,15 @@ void Connection::send(const CECFrame &frame, int timeout)
         }
 }
 
+/**
+ * @brief This function is used to send CEC frame to CEC Bus.
+ *
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ * @param[in] timeout It is an upper bound on the amount of time to wait so that the application will not hang during sending.
+ * @param[in] doThrow Throw an exception if the CEC frame is unable to send.
+ *
+ * @return None.
+ */
 void Connection::send(const CECFrame &frame, int timeout, const Throw_e &doThrow)
 {
 	CCEC_LOG( LOG_DEBUG, "Sending out from Connection\r\n");
@@ -149,6 +221,13 @@ void Connection::send(const CECFrame &frame, int timeout, const Throw_e &doThrow
 	}
 }
 
+/**
+ * @brief This function is used to send the CEC frame to physical CEC Bus using asynchronous method.
+ *
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ *
+ * @return None.
+ */
 void Connection::sendAsync(const CECFrame &frame)
 {
 	CCEC_LOG( LOG_DEBUG, "Sending out from Connection\r\n");
@@ -156,6 +235,16 @@ void Connection::sendAsync(const CECFrame &frame)
 	bus.sendAsync(frame);
 }
 
+/**
+ * @brief Check the filtered is set for this connection.
+ *
+ * All incoming CECFrame arrived at the Physical CEC bus will be dispatched to all opened connections,
+ * based on the filtering criteria of the connection.
+ *
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ *
+ * @return TRUE if the filter is set for the CEC Connection, otherwise return FALSE.
+ */
 bool Connection::DefaultFilter::isFiltered(const CECFrame &frame)
 {
 	bool filtered = true;
@@ -177,6 +266,13 @@ bool Connection::DefaultFilter::isFiltered(const CECFrame &frame)
 	return filtered;
 }
 
+/**
+ * @brief Notify to the application if CECFrame is received. The CEC frame contains the raw bytes.
+ *
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ *
+ * @return None.
+ */
 void Connection::DefaultFrameListener::notify(const CECFrame &frame) const
 {
 	{AutoLock lock_(connection.mutex);
@@ -193,6 +289,13 @@ void Connection::DefaultFrameListener::notify(const CECFrame &frame) const
 	}
 }
 
+/**
+ * @brief Match the source address and update the logical address for the Connection.
+ *
+ * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
+ *
+ * @return None.
+ */
 void Connection::matchSource(const CECFrame &frame)
 {
 	//@TODO: use Header.from/to to do filtering, instead of raw bytes

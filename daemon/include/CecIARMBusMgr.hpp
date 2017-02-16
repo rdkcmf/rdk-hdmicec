@@ -25,6 +25,11 @@
 * @{
 **/
 
+/**
+* @addtogroup HDMI_DAEMON
+* @{
+**/
+
 
 #include "libIARM.h"
 
@@ -55,5 +60,6 @@ private:
 CCEC_END_NAMESPACE
 
 
+/** @} */
 /** @} */
 /** @} */

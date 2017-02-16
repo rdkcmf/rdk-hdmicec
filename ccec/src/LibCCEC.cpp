@@ -18,12 +18,20 @@
 */
 
 
+
 /**
 * @defgroup hdmicec
 * @{
 * @defgroup ccec
 * @{
 **/
+
+/**
+ * @defgroup hdmi_ccec HDMI-CEC CCEC
+ * @ingroup HDMI_CEC
+ * @ingroup hdmi_ccec
+ * @{
+ */
 
 
 #include <string.h>
@@ -45,17 +53,34 @@ CCEC_BEGIN_NAMESPACE
 
 extern char _CEC_LOG_PREFIX[64];
 
+/**
+ * @brief This function is used to create the instance for CEC.
+ *
+ * @return libCCEC Instance of CEC.
+ */
 LibCCEC &LibCCEC::getInstance()
 {
 	static LibCCEC libCCEC;
 	return libCCEC;
 }
 
+/**
+ * @brief This is Constructor for LibCEC class. It initializes variables with
+ * default values.
+ */
 LibCCEC::LibCCEC()
 : initialized(false), connected(false)
 {
 }
 
+/**
+ * @brief This function is used to initialize CEC by starting the driver and
+ * doing host-specific initialization.
+ *
+ * @param[in] name Name of CEC log prefix.
+ *
+ * @return None
+ */
 void LibCCEC::init(const char *name)
 {AutoLock lock_(mutex);
 
@@ -77,6 +102,12 @@ void LibCCEC::init(const char *name)
 	initialized = true;
 }
 
+/**
+ * @brief This function is used to stop CEC by terminating the connection and
+ * stoping the driver.
+ *
+ * @return None
+ */
 void LibCCEC::term()
 {AutoLock lock_(mutex);
 
@@ -88,6 +119,15 @@ void LibCCEC::term()
 	Driver::getInstance().close();
 	initialized = false;
 }
+
+/**
+ * @brief This function is used to get CEC device logical address
+ * starting the connection.
+ *
+ * @param[in] devType Device whose logical address has to be found.
+ *
+ * @return logicalAddress Logical address of the device.
+ */
 int LibCCEC::getLogicalAddress(int devType)
 {
 	//printf("Entered LibCCEC::getLogicalAddress \n");
@@ -111,5 +151,6 @@ int LibCCEC::getLogicalAddress(int devType)
 CCEC_END_NAMESPACE
 
 
+/** @} */
 /** @} */
 /** @} */

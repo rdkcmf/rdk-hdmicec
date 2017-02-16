@@ -18,6 +18,12 @@
 */
 
 
+/**
+ * @defgroup HDMI_DAEMON HDMI-CEC Daemon
+ * @ingroup HDMI_CEC
+ * @addtogroup HDMI_DAEMON
+ * @{
+**/
 
 /**
 * @defgroup hdmicec
@@ -25,7 +31,6 @@
 * @defgroup daemon
 * @{
 **/
-
 
 #include <stdio.h>
 #include <string.h>
@@ -70,7 +75,17 @@ static IARM_Result_t _Enable(void *arg);
 
 static void _iarmMgrHdmiEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len);
 
-
+/**
+ * @brief This funtion is used as hdmi event handler to check the status of HDMI
+ * whether it is inserted or ejected during hotplugging.
+ *
+ * @param[in] owner Owner details of the handler.
+ * @param[in] eventId Event type, e.g. Hotplug.
+ * @param[in] data Detail about HDMI event.
+ * @param[in] len Length of data.
+ *
+ * @return None
+ */
 static void _iarmMgrHdmiEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len)
 {
     switch (eventId) {
@@ -116,7 +131,17 @@ static void _iarmMgrHdmiEventHandler(const char *owner, IARM_EventId_t eventId, 
    }
 }
 
-
+/**
+ * @brief This function is used to append the received cec event data to
+ * CECFrame structure and sends it out.
+ *
+ * @param[in] owner Owner details of the handler.
+ * @param[in] eventId Event type, e.g. Hotplug.
+ * @param[in] data Detail about HDMI event.
+ * @param[in] len Length of data.
+ *
+ * @return None
+ */
 static void cecSendEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len)
 {
     Mutex m;
@@ -129,6 +154,17 @@ static void cecSendEventHandler(const char *owner, IARM_EventId_t eventId, void 
     }
 }
 
+/**
+ * @brief This function is used to starts the CECIARMMgr instance by calling
+ * _Enable function after receiving IARM_BUS_CECMGR_EVENT_ENABLE event.
+ *
+ * @param[in] owner Owner details of the handler.
+ * @param[in] eventId Event type, e.g. Hotplug.
+ * @param[in] data Detail about HDMI event.
+ * @param[in] len Length of data.
+ *
+ * @return None
+ */
 static void cecMgrEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len)
 {
 	IARM_Bus_CECMgr_EventData_t *cecEventData = (IARM_Bus_CECMgr_EventData_t*)data;
@@ -174,12 +210,23 @@ private:
 	MessageProcessor *processor;
 };
 
+/**
+ * @brief This function is used to create instance for CECIARMMgr class.
+ *
+ * @return instance Instance of CECIARMMgr class.
+ */
 CECIARMMgr & CECIARMMgr::getInstance(void)
 {
 	static CECIARMMgr instance;
 	return instance;
 }
 
+/**
+ * @brief This function is used to initialize the CEC IARM manager by registering
+ * event handlers and function calls through IARM api.
+ *
+ * @return IARM_RESULT_SUCCESS Returns on success condition.
+ */
 IARM_Result_t CECIARMMgr::init(void)
 {
     started = false;
@@ -205,6 +252,11 @@ IARM_Result_t CECIARMMgr::init(void)
     return IARM_RESULT_SUCCESS;
 }
 
+/**
+ * @brief This function is used to terminate the CEC IARM connection.
+ *
+ * @return IARM_RESULT_SUCCESS Returns on success condition.
+ */
 IARM_Result_t CECIARMMgr::term(void)
 {
 	IARM_Bus_Disconnect();
@@ -212,6 +264,13 @@ IARM_Result_t CECIARMMgr::term(void)
     return IARM_RESULT_SUCCESS;
 }
 
+/**
+ * @brief This function is used to start the connection for cec manager by
+ * creating and adding the frame listener and establishing the connection.
+ *
+ * @retval IARM_RESULT_SUCCESS Returns on success condition.
+ * @retval IARM_RESULT_INVALID_STATE Returns on failure condition.
+ */
 IARM_Result_t CECIARMMgr::start(void)
 {AutoLock lock_(mutex);
     
@@ -232,6 +291,13 @@ IARM_Result_t CECIARMMgr::start(void)
     return IARM_RESULT_SUCCESS;
 }
 
+/**
+ * @brief This function is used to check time the HeartBeat occurs.
+ * A HeartBeat protocol is generally used to negotiate and monitor the
+ * availability of a resource.
+ *
+ * @return IARM_RESULT_SUCCESS Returns on success condition.
+ */
 IARM_Result_t CECIARMMgr::loop(void)
 {
     time_t curr = 0;
@@ -244,7 +310,13 @@ IARM_Result_t CECIARMMgr::loop(void)
 	return IARM_RESULT_SUCCESS;
 }
 
-
+/**
+ * @brief This function is used to stop the cec IARM manager connection.
+ * It closes the connection, deletes framelistener, connection and processor
+ * instances.
+ *
+ * @return IARM_RESULT_SUCCESS Returns on success condition.
+ */
 IARM_Result_t CECIARMMgr::stop(void)
 {
     {AutoLock lock_(mutex);
@@ -273,7 +345,14 @@ IARM_Result_t CECIARMMgr::stop(void)
     return IARM_RESULT_SUCCESS;
 }
 
-
+/**
+ * @brief This function is used to send the CECFrame if the connection is ready.
+ *
+ * @param[in] arg Address of IARM_Bus_CECMgr_Send_Param_t structure.
+ *
+ * @retval IARM_RESULT_SUCCESS Returns on success condition.
+ * @retval IARM_RESULT_INVALID_STATE Returns on failed connection.
+ */
 static IARM_Result_t _Send(void *arg)
 {
 	IARM_Bus_CECMgr_Send_Param_t *param = (IARM_Bus_CECMgr_Send_Param_t *)arg;
@@ -304,6 +383,15 @@ static IARM_Result_t _Send(void *arg)
 	return IARM_RESULT_SUCCESS;
 }
 
+/**
+ * @brief This function is used to get the logical address of CEC devices.
+ *
+ * @param[in] arg Address of IARM_Bus_CECMgr_Send_Param_t structure, where info
+ * about CEC devices are present.
+ *
+ * @return retCode Returns IARM_RESULT_SUCCESS on success condition and
+ * IARM_RESULT_INVALID_STATE on failure condition.
+ */
 static IARM_Result_t _GetLogicalAddress(void *arg)
 {
 	IARM_Result_t retCode = IARM_RESULT_SUCCESS;
@@ -324,7 +412,14 @@ static IARM_Result_t _GetLogicalAddress(void *arg)
 	return retCode;
 }
 
-
+/**
+ * @brief This function is used to start or stop the CEC connections.
+ *
+ * @param[in] arg Address of IARM_Bus_CECMgr_Send_Param_t structure, where info
+ * about CEC devices are present.
+ *
+ * @return Returns IARM_RESULT_SUCCESS on success condition.
+ */
 static IARM_Result_t _Enable(void *arg)
 {
     IARM_Result_t retCode = IARM_RESULT_SUCCESS;
@@ -351,5 +446,6 @@ CCEC_END_NAMESPACE
 
 
 
+/** @} */
 /** @} */
 /** @} */

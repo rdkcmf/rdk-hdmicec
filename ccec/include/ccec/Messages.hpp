@@ -17,6 +17,43 @@
  * limitations under the License.
 */
 
+/**
+ * @defgroup HDMI_CEC_MSG_N_FRAME HDMI-CEC Messages and Frames
+ * The CECFrame is a byte buffer that provides access to raw CEC bytes. CECFrame is guaranteed to be a
+ * complete CEC Message that has the necessary data blocks:
+ * @n @n
+ * - The Header Data block (The byte that contains the initiator and destination address)
+ * - The OpCode Data Block (The byte that contains the opcode).
+ * - The Operand Data Block.(The bytes that contains the operands).
+ *
+ * In most cases application need not access CECFrame directly, but manipulate the raw bytes through the Message API.
+ * @n @n
+ * The Message API allows the application to send or receive high-level CEC message construct instead of raw bytes.
+ * Basically for each CEC message (such as ActiveSource), there is a C++ class implementation representing it.
+ * Each message class provides necessary getter and setter methods to access the properties of each message.
+ * @ingroup HDMI_CEC
+ *
+ * @defgroup HDMI_CEC_MSG_N_FRAME_CLASSES HDMI-CEC Messages and Frames Classes
+ * Described the details of High Level Class diagram and its functionalities.
+ * @ingroup HDMI_CEC_MSG_N_FRAME
+ *
+ * @defgroup HDMI_CEC_MULTI_SYNC HDMI-CEC Messages - Asynchronous Vs. Synchronous
+ * When messages converge on the logical buses, they are queued for sending opportunities on the physical bus.
+ * The waiting time for such send to complete, though short in most cases, can be problematic to some interactive
+ * real-time applications. It is recommended that the applications always send CEC messages asynchronously via
+ * the Connection API and use the listener APIs to monitor response messages or device state changes.
+ * The CEC library offers abundant APIs to facilitate such asynchronous implementation and the application is
+ * encouraged to make full use of them.
+ * @n @n
+ * Given the vast variance of HDMI-CEC support from the off-the-self media devices, it is not recommended that
+ * application wait for the response from a destination device. Even if the request message is sent out successfully,
+ * the destination device may choose to ignore the request. The recommended approach is again to send the request
+ * asynchronously and use the listener to monitor responses.
+ * @n @n
+ * Overall, given the asynchronous nature of HDMI-CEC, application should always opt to use Asynchronous APIs
+ * as first choice. And for same reasons, the RDK CEC library offers only limited support for Synchronous APIs.
+ * @ingroup HDMI_CEC_MSG_N_FRAME
+ */
 
 /**
 * @defgroup hdmicec
@@ -41,6 +78,13 @@
 #include "ccec/Util.hpp"
 
 CCEC_BEGIN_NAMESPACE
+/**
+ * @brief The Message API allows the application to send or receive high-level CEC message construct instead of raw bytes.
+ *
+ * Basically for each CEC message (such as ActiveSource), there is a C++ class implementation representing it.
+ * Each message class provides necessary getter and setter methods to access the properties of each message.
+ * @ingroup HDMI_CEC_MSG_N_FRAME_CLASSES
+ */
 class ActiveSource : public DataBlock 
 {
 public:
