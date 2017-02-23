@@ -171,7 +171,6 @@ function install()
 		export OPENSOURCE_BASE=$COMBINED_ROOT/opensource
 	elif [ $RDK_PLATFORM_SOC = "broadcom" ]; then
 		cp -v ${CC_PATH}/install/bin/CecDaemonMain ${RDK_FSROOT_PATH}mnt/nfs/env
-		cp -v ${CC_PATH}/install/bin/CECDevMgr ${RDK_FSROOT_PATH}mnt/nfs/env
 		cp -v ${CC_PATH}/install/lib/libRCEC*.so ${RDK_FSROOT_PATH}/usr/local/lib
 		cp -r ${CC_PATH}/ccec/include/ ${RDK_FSROOT_PATH}/usr/include/ccec/
 		cp -r ${CC_PATH}/osal/include/ ${RDK_FSROOT_PATH}/usr/include/osal/
