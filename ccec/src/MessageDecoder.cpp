@@ -145,7 +145,7 @@ void MessageDecoder::decode(const CECFrame &in_)
 		processor.process(Abort(), header);
 		break;
 	default:
-        CCEC_LOG( LOG_WARN, "Unhandled Message Received \n");
+        CCEC_LOG( LOG_DEBUG, "Unhandled Message Received \n");
         OpCode(in_, OPCODE_OFFSET).print();
 		break;
 	}
