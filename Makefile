@@ -50,7 +50,7 @@ install:
 	cp $(exe_ccec)/drivers/test/install/bin/* $(install_dir)
 	cp $(exe_daemon)/install/bin/* $(install_dir)
 	cp $(exe_devmgr)/install/bin/* $(install_dir)
-	cp $(exe_host)/install/lib/* $(install_lib_dir)
+	#cp $(exe_host)/install/lib/* $(install_lib_dir)
 
 ifneq ($(PLATFORM_SOC),entropic)
 endif

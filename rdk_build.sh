@@ -160,10 +160,10 @@ function install()
 	cd ${CC_PATH}
 	
         mkdir -p ${RDK_FSROOT_PATH}/usr/local/lib
-	    mkdir -p ${RDK_FSROOT_PATH}/mnt/nfs/env
-        mkdir -p ${RDK_FSROOT_PATH}/usr/local/include/ccec
-        mkdir -p ${RDK_FSROOT_PATH}/usr/local/include/osal
-        mkdir -p ${RDK_FSROOT_PATH}/usr/local/include/host
+	mkdir -p ${RDK_FSROOT_PATH}/mnt/nfs/env
+        mkdir -p ${RDK_FSROOT_PATH}/usr/include/ccec
+        mkdir -p ${RDK_FSROOT_PATH}/usr/include/osal
+        mkdir -p ${RDK_FSROOT_PATH}/usr/include/host
 	
 	if [ $RDK_PLATFORM_SOC = "intel" ]; then
 		export CC=$CROSS_COMPILE-gcc
