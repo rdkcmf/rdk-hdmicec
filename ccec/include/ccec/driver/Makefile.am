@@ -20,4 +20,5 @@ SUBDIRS =
 DIST_SUBDIRS =
 
 libhdmicecheader_la_includedir = $(includedir)/ccec/drivers/
-libhdmicecheader_la_include_HEADERS = hdmi_cec_driver.h
+libhdmicecheader_la_include_HEADERS = ../../../drivers/include/ccec/drivers/hdmi_cec_driver.h \
+  ../../../drivers/include/ccec/drivers/iarmbus/CecIARMBusMgr.h
