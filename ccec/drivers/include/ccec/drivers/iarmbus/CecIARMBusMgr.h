@@ -51,6 +51,7 @@ typedef enum _CECMgr_EventId_t {
 	IARM_BUS_CECMGR_EVENT_ENABLE,         /*!< Notify Enable/Disable of CEC Driver  */
 	IARM_BUS_CECMGR_EVENT_DAEMON_INITIALIZED,    /*!< Notify  CEC Daemon initialized  */
         IARM_BUS_CECMGR_EVENT_MAX,             /*!< Maximum event id*/
+        IARM_BUS_CECMGR_EVENT_STATUS_UPDATED        /*!< CEC Status Updated  */
 } IARM_Bus_CECMgr_EventId_t;
 
 typedef enum _CECMgr_DataDirection_t {
@@ -79,6 +80,10 @@ typedef struct _IARM_Bus_CECMgr_Enable_Param_t {
     int enabled;
 }IARM_Bus_CECMgr_Enable_Param_t;
 
+typedef struct _IARM_Bus_CECMgr_Status_Updated_Param_t
+{
+       int logicalAddress;
+}IARM_Bus_CECMgr_Status_Updated_Param_t;
 
 #ifdef __cplusplus
 }
