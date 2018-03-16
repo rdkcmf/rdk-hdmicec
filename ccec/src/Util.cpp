@@ -55,6 +55,17 @@ static int cec_log_level = LOG_INFO;
                             (int)__tv.tv_usec);                                      \
 } while(0)
 
+static const char *logLevel[][2] =
+{   {"FATAL","0"},
+    {"ERROR","1"},
+    {"WARN","2"},
+    {"EXP","3"},
+    {"NOTICE","4"},
+    {"INFO","5"},
+    {"DEBUG","6"},
+    {"TRACE","7"}
+};
+
 /**
  * @brief This function is used to get the cec log from the log file and checks
  * the level of log received.

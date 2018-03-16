@@ -63,17 +63,6 @@ public:
 #define LOG_MAX 8
 
 
-static const char *logLevel[][2] =
-{   {"FATAL","0"},
-    {"ERROR","1"},
-    {"WARN","2"},
-    {"EXP","3"},
-    {"NOTICE","4"},
-    {"INFO","5"},
-    {"DEBUG","6"},
-    {"TRACE","7"}
-};
-
 void check_cec_log_status(void);
 void CCEC_LOG(int level,const char *format, ...);
 void dump_buffer(unsigned char * buf, int len);

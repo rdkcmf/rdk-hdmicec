@@ -44,6 +44,10 @@ static CECHost_Err_t  CECHost_PowerStateCallback_ (int32_t curState, int32_t new
 static CECHost_Err_t CECHost_DevMgrStatusCallback_(bool ipStatus,bool* opStatus);
 static CECHost_Err_t CECHost_OSDNameCallback_(uint8_t *name, size_t len);
 static CECHost_Err_t CECHost_PolicyCallback_(CECHost_Policy_t policy);
+
+
+/*Avoiding currently unused variables and function to avoid compilation warnings*/
+#if 0
 /*Temporary change to allow power sync test*/
 static int file_exists(const char *filename)
 {
@@ -60,21 +64,24 @@ static int file_exists(const char *filename)
         return 0;
 }
 
-/*
- * Context/Cache
- */
-static Connection *conn_ = 0;
-static int32_t isConnected = 0;
 static bool devMgrStatus = false;
 static int32_t cecClntRefCounter = 0;
 static pthread_mutex_t devMgrMutex = PTHREAD_MUTEX_INITIALIZER;
-static PhysicalAddress phy(0,0,0,0);
-static int32_t powerState = CECHost_POWERSTATE_STANDBY;
 static CECHost_Policy_t policy = {
     /*Default Policy*/
     /*.turnOffTv = */0,
     /*.turnOffSTB = */0,
 };
+#endif
+
+
+/*
+ * Context/Cache
+ */
+static Connection *conn_ = 0;
+static int32_t isConnected = 0;
+static PhysicalAddress phy(0,0,0,0);
+static int32_t powerState = CECHost_POWERSTATE_STANDBY;
 
 #define MAX_LOGICAL_ADDRESS 14
 #define MAX_LENGTH_OF_OSD_NAME 15
@@ -283,7 +290,7 @@ int main(int argc, char *argv[])
 		conn.addFrameListener(&frameListener);
 
 		LogicalAddress source;
-		CECHost_DeviceStatus_t devStatus;
+		//CECHost_DeviceStatus_t devStatus;
 		while(1) {
 			static int j = 0 ;
 			/*Heart Beat in appx 150s*/

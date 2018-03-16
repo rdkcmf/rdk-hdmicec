@@ -86,7 +86,8 @@ int HdmiCecOpen(int *handle)
             memset(&data, 0, sizeof(data));
             data.length =  1;
             data.data[0]=  1;
-            IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_ENABLE, (void *)&data, sizeof(data));
+            /*To Do - Return values checking of IARM Calls*/
+            ret = IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_ENABLE, (void *)&data, sizeof(data));
 #endif
         }
 		IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_RECV, cecRecvEventHandler);
@@ -124,7 +125,8 @@ int HdmiCecClose(int handle)
             memset(&data, 0, sizeof(data));
             data.length =  1;
             data.data[0]=  0;
-            IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_ENABLE, (void *)&data, sizeof(data));
+            /*To Do - Return values checking of IARM Calls*/
+            ret = IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_ENABLE, (void *)&data, sizeof(data));
 #endif
         }
 		IARM_Bus_UnRegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_RECV);

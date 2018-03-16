@@ -242,7 +242,7 @@ int DriverImpl::getLogicalAddress(int devType)
 
 void DriverImpl::removeLogicalAddress(const LogicalAddress &source)
 {
-	int LA[15] = {0};
+//	int LA[15] = {0};
     {AutoLock lock_(mutex);
 		if (status != OPENED) {
 			throw InvalidStateException();

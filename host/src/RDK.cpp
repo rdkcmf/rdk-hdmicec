@@ -368,7 +368,7 @@ CECHost_Err_t CECHost_IsActive(int32_t *active)
 static IARM_Result_t _PowerPreChange(void *arg)
 {
     IARM_Bus_CommonAPI_PowerPreChange_Param_t *param = (IARM_Bus_CommonAPI_PowerPreChange_Param_t *)arg;
-    IARM_Result_t retCode = IARM_RESULT_SUCCESS;
+    //IARM_Result_t retCode = IARM_RESULT_SUCCESS;
 
     int curState = (param->curState == IARM_BUS_PWRMGR_POWERSTATE_ON) ? CECHost_POWERSTATE_ON : CECHost_POWERSTATE_STANDBY;
     int newState = (param->newState == IARM_BUS_PWRMGR_POWERSTATE_ON) ? CECHost_POWERSTATE_ON : CECHost_POWERSTATE_STANDBY;
@@ -482,7 +482,7 @@ static void _powerEventHandler(const char *owner, IARM_EventId_t eventId, void *
    switch (eventId) {
       case  IARM_BUS_PWRMGR_EVENT_MODECHANGED :{
     	  IARM_Bus_PWRMgr_EventData_t *eventData = (IARM_Bus_PWRMgr_EventData_t *)data;
-         IARM_Result_t retCode = IARM_RESULT_SUCCESS;
+         //IARM_Result_t retCode = IARM_RESULT_SUCCESS;
 
          int curState = (eventData->data.state.curState == IARM_BUS_PWRMGR_POWERSTATE_ON) ? CECHost_POWERSTATE_ON : CECHost_POWERSTATE_STANDBY;
          int newState = (eventData->data.state.newState == IARM_BUS_PWRMGR_POWERSTATE_ON) ? CECHost_POWERSTATE_ON : CECHost_POWERSTATE_STANDBY;
