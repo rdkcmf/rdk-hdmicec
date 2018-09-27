@@ -32,3 +32,4 @@ libRCEC_la_SOURCES = CECFrame.cpp \
                      MessageDecoder.cpp
 
 libRCEC_la_LDFLAGS = -lpthread
+libRCEC_la_LIBADD = -lRCECOSHal -L${top_builddir}/osal/src/.libs
