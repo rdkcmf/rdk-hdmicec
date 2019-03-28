@@ -17,12 +17,15 @@
 # limitations under the License.
 ##########################################################################
 [Unit]
-Description= Cec Daemon Main
+Description= Cec Daemon Precheck
 
-After=iarmbusd.service nxserver.service
-ConditionPathExists=/tmp/cecdaemon-enabled
+After=iarmbusd.service nxserver.service tr69hostif.service
 
 [Service]
-ExecStart=/bin/sh -c '/usr/bin/CecDaemonMain true'
-ExecStop=/bin/kill -15 $MAINPID
-Restart=always
+Type=oneshot
+ExecStart=/bin/sh -c '/lib/rdk/cecdaemon_starter.sh'
+ExecReload=/bin/kill -HUP $MAINPID
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
