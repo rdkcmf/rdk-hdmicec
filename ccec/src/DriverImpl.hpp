@@ -66,6 +66,7 @@ public:
 	virtual void  removeLogicalAddress(const LogicalAddress &source);
 	virtual bool  addLogicalAddress   (const LogicalAddress &source);
 	virtual int   getLogicalAddress(int devType);
+	virtual void  getPhysicalAddress(unsigned int *physicalAddress);
 //	virtual const std::list<LogicalAddress> & getLogicalAddresses(void);
 	virtual bool isValidLogicalAddress(const LogicalAddress &source) const;
 	virtual void poll(const LogicalAddress &from, const LogicalAddress &to) throw(InvalidStateException, IOException, CECNoAckException);

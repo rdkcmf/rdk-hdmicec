@@ -47,6 +47,7 @@ public:
 	void init(const char * name= 0);
 	void term(void);
 	int getLogicalAddress(int devType);
+	void getPhysicalAddress(unsigned int *physicalAddress);
 
 private:
 //	int logicalAddresses;

@@ -188,6 +188,37 @@ int HdmiCecGetLogicalAddress(int handle, int devType,  int *logicalAddresses)
 	return retErr;
 }
 
+void HdmiCecGetPhysicalAddress(int handle, unsigned int *physicalAddresses)
+{
+        DRIVER_LOCK();
+        CECDriverAssert(handle == ((int)driverCtx));
+        int retErr = HDMI_CEC_IO_SUCCESS;
+
+        //printf("HdmiCecGetPhysicalAddress from IARM driver  \n");
+
+        IARM_Result_t ret = IARM_RESULT_SUCCESS;
+        IARM_Bus_CECMgr_GetPhysicalAddress_Param_t data;
+
+        memset(&data, 0, sizeof(data));
+
+        ret = IARM_Bus_Call(IARM_BUS_CECMGR_NAME,IARM_BUS_CECMGR_API_GetPhysicalAddress,(void *)&data, sizeof(data));
+        if( IARM_RESULT_SUCCESS != ret)
+        {
+                //printf("Iarm call failed retval = %d \n", ret);
+                retErr = HDMI_CEC_IO_INVALID_STATE;
+        }
+        else
+        {
+                *physicalAddresses = data.physicalAddress;
+        }
+
+        //printf("HdmiCecGetPhysicalAddress from IARM driver  Physical Address obtained  = %x \n", data.physicalAddress);
+
+        DRIVER_UNLOCK();
+
+        return; 
+}
+
 int HdmiCecSetRxCallback(int handle, HdmiCecRxCallback_t cbfunc, void *data)
 {
 	DRIVER_LOCK();
