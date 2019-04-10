@@ -108,6 +108,17 @@ int HdmiCecClose(int handle);
 int HdmiCecSetLogicalAddress(int handle, int *logicalAddresses, int num);
 
 /**
+ * @brief Get the Physical Address obtained by the driver.
+ *
+ * This function get the Physical address for the specified device type.
+ *
+ * @param [in]     :  handle returned from the HdmiCecOpen() function.
+ * @param [out]    :  physical address acquired
+ *
+ * @return None.
+ */
+void HdmiCecGetPhysicalAddress(int handle, unsigned int *physicalAddress);
+/**
  * @brief Add one Logical Addresses to be used by host device.
  *
  * This function can block until the intended logical address is secured by

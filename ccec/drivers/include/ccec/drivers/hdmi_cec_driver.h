@@ -291,6 +291,18 @@ int HdmiCecRemoveLogicalAddress(int handle, int logicalAddresses);
 int HdmiCecGetLogicalAddress(int handle, int devType,  int *logicalAddress);
 
 /**
+ * @brief Get the Physical Address obtained by the driver.
+ *
+ * This function get the Physical address for the specified device type.
+ *
+ * @param [in]     :  handle returned from the HdmiCecOpen() function.
+ * @param [out]    :  physical address acquired
+ *
+ * @return None.
+ */
+void HdmiCecGetPhysicalAddress(int handle,unsigned int *physicalAddress);
+
+/**
  * @brief Sets CEC packet Receive callback.  
  *
  * This function sets a callback function to be invoked for each packet arrival.   

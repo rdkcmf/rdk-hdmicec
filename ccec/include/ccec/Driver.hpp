@@ -63,6 +63,7 @@ public:
 	virtual bool  addLogicalAddress   (const LogicalAddress &source) = 0;
 //	virtual void  getLogicalAddress(int devType, int *logicalAddress) = 0;
 	virtual int  getLogicalAddress(int devType) = 0;
+	virtual void getPhysicalAddress(unsigned int *physicalAddress) = 0;
 	virtual bool isValidLogicalAddress(const LogicalAddress &source) const = 0;
 	virtual void poll(const LogicalAddress &from, const LogicalAddress &to) throw(InvalidStateException, IOException, CECNoAckException) = 0;
 

@@ -71,6 +71,7 @@ static volatile Connection *m_connection = 0;
 
 static IARM_Result_t _Send(void *arg);
 static IARM_Result_t _GetLogicalAddress(void *arg);
+static IARM_Result_t _GetPhysicalAddress(void *arg);
 static IARM_Result_t _Enable(void *arg);
 
 static void _iarmMgrHdmiEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len);
@@ -236,6 +237,7 @@ IARM_Result_t CECIARMMgr::init(void)
     IARM_Bus_RegisterEvent(IARM_BUS_CECMGR_EVENT_MAX);
     IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_Send,_Send);
     IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_GetLogicalAddress,_GetLogicalAddress);
+    IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_GetPhysicalAddress,_GetPhysicalAddress);
     IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_Enable, _Enable);
     IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_ENABLE, cecMgrEventHandler);
     IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_SEND, cecSendEventHandler);
@@ -410,6 +412,26 @@ static IARM_Result_t _GetLogicalAddress(void *arg)
 	CCEC_LOG( LOG_DEBUG, "Inside _GetLogicalAddress : Logical Address : %d  >>>>>>\r\n",param->logicalAddress);
 
 	return retCode;
+}
+
+static IARM_Result_t _GetPhysicalAddress(void *arg)
+{
+        IARM_Result_t retCode = IARM_RESULT_SUCCESS;
+        IARM_Bus_CECMgr_GetPhysicalAddress_Param_t *param = (IARM_Bus_CECMgr_GetPhysicalAddress_Param_t *) arg;
+
+        CCEC_LOG( LOG_DEBUG, "Inside _GetPhysicalAddress :  >>>>>>\r\n");
+        try{
+                LibCCEC::getInstance().getPhysicalAddress(&(param->physicalAddress));
+        }
+        catch(Exception &e)
+        {
+                CCEC_LOG(LOG_EXP, "_GetPhysicalAddress caught %s \r\n",e.what());
+                retCode = IARM_RESULT_INVALID_STATE;
+        }
+
+        CCEC_LOG( LOG_DEBUG, "Inside _GetPhysicalAddress : Physical Address : %x  >>>>>>\r\n",param->physicalAddress);
+
+        return retCode;
 }
 
 /**

@@ -240,6 +240,19 @@ int DriverImpl::getLogicalAddress(int devType)
     }
 }
 
+void DriverImpl::getPhysicalAddress(unsigned int *physicalAddress)
+{
+    {AutoLock lock_(mutex);
+        CCEC_LOG( LOG_DEBUG, "DriverImpl::getPhysicalAddress called \r\n");
+
+        HdmiCecGetPhysicalAddress(nativeHandle,physicalAddress);
+
+        CCEC_LOG( LOG_DEBUG, "DriverImpl::getPhysicalAddress got physical Address : %x \r\n", *physicalAddress);
+        return ;
+    }
+}
+
+
 void DriverImpl::removeLogicalAddress(const LogicalAddress &source)
 {
 //	int LA[15] = {0};

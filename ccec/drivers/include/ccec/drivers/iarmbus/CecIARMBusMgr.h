@@ -43,6 +43,7 @@ extern "C"
 #define IARM_BUS_CECMGR_API_Enable                   "Enable"
 #define IARM_BUS_CECMGR_API_Send                     "Send"
 #define IARM_BUS_CECMGR_API_GetLogicalAddress        "GetLogicalAddress"
+#define IARM_BUS_CECMGR_API_GetPhysicalAddress       "GetPhysicalAddress"
 
 /*! Events published from IR Mananger */
 typedef enum _CECMgr_EventId_t {
@@ -75,6 +76,10 @@ typedef struct _IARM_Bus_CECMgr_GetLogicalAddress_Param_t {
 	int devType;
 	int logicalAddress;
 }IARM_Bus_CECMgr_GetLogicalAddress_Param_t;
+
+typedef struct _IARM_Bus_CECMgr_GetPhysicalAddress_Param_t {
+        unsigned int physicalAddress;
+}IARM_Bus_CECMgr_GetPhysicalAddress_Param_t;
 
 typedef struct _IARM_Bus_CECMgr_Enable_Param_t {
     int enabled;

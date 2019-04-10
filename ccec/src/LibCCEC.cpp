@@ -147,6 +147,18 @@ int LibCCEC::getLogicalAddress(int devType)
 	return logicalAddress;
 }
 
+void LibCCEC::getPhysicalAddress(unsigned int *physicalAddress)
+{
+        //printf("Entered LibCCEC::getPhysicalAddress\n");
+        if (!initialized) {
+                throw InvalidStateException();
+        }
+
+        Driver::getInstance().getPhysicalAddress(physicalAddress);
+
+        //printf("LibCCEC::getPhysicalAddress got getPhysicallAddress : %x \n",physicalAddress);
+        return;
+}
 
 CCEC_END_NAMESPACE
 
