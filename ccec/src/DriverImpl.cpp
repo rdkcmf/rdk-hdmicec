@@ -218,10 +218,6 @@ void  DriverImpl::write(const CECFrame &frame)  throw(InvalidStateException, IOE
 		if (((frame.at(0) & 0x0F) != 0x0F) && sendResult == HDMI_CEC_IO_SENT_BUT_NOT_ACKD) {
 			throw CECNoAckException();
 		}
-
-		/* Send a copy to the incoming queue as echo back */
-		CECFrame *frameCopy = new CECFrame(frame);
-		rQueue.offer(frameCopy);
     }
 
     CCEC_LOG( LOG_DEBUG, "Send Completed\r\n");
