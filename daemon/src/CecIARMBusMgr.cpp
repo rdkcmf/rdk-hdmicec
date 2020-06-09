@@ -65,6 +65,9 @@ using CCEC_OSAL::AutoLock;
 
 CCEC_BEGIN_NAMESPACE
 
+#define HEADER_OFFSET 0
+#define OPCODE_OFFSET 1
+
 static Mutex mutex;
 static bool enabled;
 static volatile Connection *m_connection = 0;
@@ -192,13 +195,22 @@ public:
 	CecIARMMgrFrameListener(MessageProcessor *processor) : processor(processor) {}
 	void notify(const CECFrame &in) const {
 		MessageDecoder(*processor).decode(in);
-
 		/* Signal to CEC IARMMgr's clients */
 		IARM_Bus_CECMgr_EventData_t dataRcvd;
+                char strBuffer[50] = {0};
+                Header header(in,HEADER_OFFSET);
 		memset(&dataRcvd, 0, sizeof(dataRcvd));
 		if (in.length() <= IARM_BUS_CECMGR_MAX_DATA_LENGTH) {
 			dataRcvd.length = in.length();
 			memcpy(dataRcvd.data, in.getBuffer(), in.length());
+                        for (int i = 0; i< in.length(); i++)
+                        {
+                             snprintf(strBuffer + strlen(strBuffer) , (sizeof(strBuffer) - strlen(strBuffer)) \
+                                                       ,"%02X ",(uint8_t) *(dataRcvd.data + i));
+                        }
+                        CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s \n",header.from.toString().c_str(), \
+                                           header.to.toString().c_str(), GetOpName(OpCode(in,OPCODE_OFFSET).opCode()), \
+                                           strBuffer);
 			CCEC_LOG( LOG_DEBUG, "Broadcasting msg on IARMBus\r\n");
 			IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_RECV, (void *)&dataRcvd, sizeof(dataRcvd));
 		}
@@ -359,7 +371,18 @@ static IARM_Result_t _Send(void *arg)
 {
 	IARM_Bus_CECMgr_Send_Param_t *param = (IARM_Bus_CECMgr_Send_Param_t *)arg;
 	CECFrame frameIn;
+        const uint8_t *buf = NULL;
+        char strBuffer[50] = {0};
+        size_t len = 0;
 	frameIn.append(param->data,param->length);
+        frameIn.getBuffer(&buf, &len);
+        Header header(frameIn,HEADER_OFFSET);
+        for (int i = 0; i < len; i++) {
+            snprintf(strBuffer + strlen(strBuffer) , (sizeof(strBuffer) - strlen(strBuffer)) \
+                                                     ,"%02X ",(uint8_t) *(buf + i));
+        }
+        CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s \n",header.from.toString().c_str(),header.to.toString().c_str(), \
+                                 GetOpName(OpCode(frameIn,OPCODE_OFFSET).opCode()),strBuffer);
 	if (m_connection) {
 		try{
 			//CCEC_LOG( LOG_DEBUG, "_Send sending >>>>>>\r\n");
