@@ -198,6 +198,7 @@ public:
 		/* Signal to CEC IARMMgr's clients */
 		IARM_Bus_CECMgr_EventData_t dataRcvd;
                 char strBuffer[50] = {0};
+                const char *opname = "none";
                 Header header(in,HEADER_OFFSET);
 		memset(&dataRcvd, 0, sizeof(dataRcvd));
 		if (in.length() <= IARM_BUS_CECMGR_MAX_DATA_LENGTH) {
@@ -208,9 +209,11 @@ public:
                              snprintf(strBuffer + strlen(strBuffer) , (sizeof(strBuffer) - strlen(strBuffer)) \
                                                        ,"%02X ",(uint8_t) *(dataRcvd.data + i));
                         }
+                        if (in.length() > OPCODE_OFFSET) {
+                             opname = GetOpName(OpCode(in,OPCODE_OFFSET).opCode());
+                        }
                         CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s \n",header.from.toString().c_str(), \
-                                           header.to.toString().c_str(), GetOpName(OpCode(in,OPCODE_OFFSET).opCode()), \
-                                           strBuffer);
+                                           header.to.toString().c_str(), opname, strBuffer);
 			CCEC_LOG( LOG_DEBUG, "Broadcasting msg on IARMBus\r\n");
 			IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_RECV, (void *)&dataRcvd, sizeof(dataRcvd));
 		}
@@ -374,6 +377,7 @@ static IARM_Result_t _Send(void *arg)
         const uint8_t *buf = NULL;
         char strBuffer[50] = {0};
         size_t len = 0;
+        const char *opname = "none";
 	frameIn.append(param->data,param->length);
         frameIn.getBuffer(&buf, &len);
         Header header(frameIn,HEADER_OFFSET);
@@ -381,8 +385,11 @@ static IARM_Result_t _Send(void *arg)
             snprintf(strBuffer + strlen(strBuffer) , (sizeof(strBuffer) - strlen(strBuffer)) \
                                                      ,"%02X ",(uint8_t) *(buf + i));
         }
-        CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s \n",header.from.toString().c_str(),header.to.toString().c_str(), \
-                                 GetOpName(OpCode(frameIn,OPCODE_OFFSET).opCode()),strBuffer);
+        if (frameIn.length() > OPCODE_OFFSET) {
+            opname = GetOpName(OpCode(frameIn,OPCODE_OFFSET).opCode());
+        }
+        CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s\n",header.from.toString().c_str(),header.to.toString().c_str(), \
+                                 opname, strBuffer);
 	if (m_connection) {
 		try{
 			//CCEC_LOG( LOG_DEBUG, "_Send sending >>>>>>\r\n");
