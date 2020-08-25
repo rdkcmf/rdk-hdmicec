@@ -304,19 +304,22 @@ void DriverImpl::poll(const LogicalAddress &from, const LogicalAddress &to)
      	 	 	 	  throw (InvalidStateException, IOException, CECNoAckException)
 {
 	uint8_t firstByte = (((from.toInt() & 0x0F) << 4) | (to.toInt() & 0x0F));
-	CCEC_LOG( LOG_DEBUG, "$$$$$$$$$$$$$$$$$$$$ POST POLL [%s] $$$$$$$$$$$$$$$$$$$$$\r\n", from.toString().c_str());
+	CCEC_LOG( LOG_DEBUG, "$$$$$$$$$$$$$$$$$$$$ POST POLL [%s] [%s]$$$$$$$$$$$$$$$$$$$$$\r\n", from.toString().c_str(), to.toString().c_str());
 
 	{
 		CECFrame frame;
 		frame.append(firstByte);
 		write(frame);
 	}
+	
+#if 0
 	{
 		/* Send a Poll so indicate there is a device present */
 		CECFrame *frame = new CECFrame();
 		frame->append(firstByte);
 		rQueue.offer(frame);
 	}
+#endif
 }
 
 DriverImpl::IncomingQueue & DriverImpl::getIncomingQueue(int nativeHandle)

@@ -222,6 +222,58 @@ void Connection::send(const CECFrame &frame, int timeout, const Throw_e &doThrow
 }
 
 /**
+ * @brief This function is used to send poll message to the Bus.
+ *
+ * @param[in] logical address of Initiator, in case of poll the initiator and follower is same.
+*  @param[in] doThrow Throw an exception if there is NACK received.
+ *
+ * @return None.
+ */
+void Connection::poll(const LogicalAddress &from, const Throw_e &doThrow)
+{
+	CCEC_LOG( LOG_DEBUG, "Polling\r\n");
+	//@TODO: Need to enforce frame's source == connection.source?
+
+	try
+	{
+	/* polling both initator and follower is same*/
+		bus.poll(from, from);
+     }
+	catch(Exception &e)
+        {
+		//CCEC_LOG(LOG_EXP, "Catch and re-throw Exception from send\r\n");
+		throw;
+	}
+}
+
+/**
+ * @brief This function is used to send ping message to the Bus.
+ *
+ * @param[in] logical address of Initiator, in case of ping the initiator and follower should be different.
+*  @param[in] doThrow Throw an exception if there is NACK received.
+ *
+ * @return None.
+ */
+void Connection::ping(const LogicalAddress &from, const LogicalAddress &to, const Throw_e &doThrow)
+{
+	CCEC_LOG( LOG_DEBUG, "Polling\r\n");
+	//@TODO: Need to enforce frame's source == connection.source?
+
+	try
+	{
+	/* Ping initator and follower should be different*/
+		bus.ping(from, to);
+    }
+	catch(Exception &e)
+    {
+		//CCEC_LOG(LOG_EXP, "Catch and re-throw Exception from send\r\n");
+		throw;
+	}
+}
+
+
+
+/**
  * @brief This function is used to send the CEC frame to physical CEC Bus using asynchronous method.
  *
  * @param[in] frame CEC Frame which is a byte stream that contains raw bytes.
@@ -300,7 +352,7 @@ void Connection::matchSource(const CECFrame &frame)
 {
 	//@TODO: use Header.from/to to do filtering, instead of raw bytes
 	if (Driver::getInstance().isValidLogicalAddress(source)) {
-		CCEC_LOG( LOG_ERROR, "Mathing source to %s\r\n", source.toString().c_str());
+		CCEC_LOG( LOG_DEBUG, "Mathing source to %s\r\n", source.toString().c_str());
 
 		const uint8_t *buf = frame.getBuffer();
 		CCEC_LOG( LOG_DEBUG, "Has source to %x\r\n", (buf[0] >> 4) & 0x0F);

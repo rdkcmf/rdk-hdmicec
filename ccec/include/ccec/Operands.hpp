@@ -187,6 +187,10 @@ public :
 		return (/*(str[0]>= UNRECOGNIZED_OPCODE) && */(str[0]<= UNABLE_TO_DETERMINE));
 	}
 
+	int toInt(void) const {
+        return str[0];
+    }
+
 	AbortReason(const CECFrame &frame, size_t startPos) : CECBytes(frame, startPos, MAX_LEN) { } 
 
 
@@ -313,7 +317,7 @@ class PhysicalAddress : public CECBytes
 
     const std::string toString(void) const {
 		std::stringstream stream;
-        stream << (int)((str[0] & 0xF0) >> 4)<< "." << (int)(str[0] & 0x0F) << "." << (int)((str[1] & 0xF0) >> 4) << "." << (int)(str[1]);
+        stream << (int)((str[0] & 0xF0) >> 4)<< "." << (int)(str[0] & 0x0F) << "." << (int)((str[1] & 0xF0) >> 4) << "." << (int)(str[1] & 0x0F);
 		return stream.str();
     }
 
@@ -474,7 +478,9 @@ public:
         STANDBY = 0x01,
         IN_TRANSITION_STANDBY_TO_ON = 0x02,
         IN_TRANSITION_ON_TO_STANDBY = 0x03,
-    };
+        POWER_STATUS_NOT_KNOWN = 0x4, 
+        POWER_STATUS_FEATURE_ABORT = 0x05,
+   };
 
     PowerStatus(int status) : CECBytes((uint8_t)status) { };
 
@@ -489,6 +495,8 @@ public:
             "Standby",
             "In transition Standby to On",
             "In transition On to Standby",
+            "Not Known",
+            "Feature Abort"
     	};
     	return names_[str[0]];
     }

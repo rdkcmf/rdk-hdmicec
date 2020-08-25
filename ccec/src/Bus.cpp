@@ -380,6 +380,61 @@ void Bus::sendAsync(const CECFrame &frame)
 	}
 }
 
+/**
+ * @brief This function is used to poll the logical address 
+ * and returns the ACK or NACK received from other devices.
+ * If NACK then the device can use this logical address.
+ *
+ * @param[in] Logical address of initiator.
+ * @param[in] Logical address of follower.
+ *
+ * @return throws exception if there is NACK
+ */
+void Bus::poll(const LogicalAddress &from, const LogicalAddress &to)
+{
+	{AutoLock rlock_(rMutex), wlock_(wMutex);
+
+            if (!started) throw InvalidStateException();
+
+            try {
+                Driver::getInstance().poll(from, to);
+                CCEC_LOG( LOG_DEBUG, "Bus::poll done\r\n");
+            }
+            catch (Exception &e){
+                CCEC_LOG( LOG_DEBUG, "Bus::poll exp caught [%s] \r\n", e.what());
+                throw;
+            }
+    }
+}
+
+/**
+ * @brief This function is used to ping devices, to know whether it present 
+ * and returns the ACK or NACK received from other devices.
+ * If ACK is received, then the device is present.
+ *
+ * @param[in] Logical address of initiator.
+ * @param[in] Logical address of follower.
+ *
+ * @return throws exception if there is NACK
+ */
+void Bus::ping(const LogicalAddress &from, const LogicalAddress &to)
+{
+	{AutoLock rlock_(rMutex), wlock_(wMutex);
+
+            if (!started) throw InvalidStateException();
+
+            try {
+                Driver::getInstance().poll(from, to);
+                CCEC_LOG( LOG_DEBUG, "Bus::ping done\r\n");
+            }
+            catch (Exception &e){
+                CCEC_LOG( LOG_DEBUG, "Bus::ping exp caught [%s] \r\n", e.what());
+                throw;
+            }
+    }
+}
+
+
 CCEC_END_NAMESPACE
 
 

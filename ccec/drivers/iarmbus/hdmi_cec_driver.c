@@ -145,8 +145,28 @@ int HdmiCecClose(int handle)
 
 int HdmiCecAddLogicalAddress(int handle, int logicalAddresses)
 {
-	//@TODO: IARM Call.
-    return HDMI_CEC_IO_SUCCESS;
+	DRIVER_LOCK();
+	CECDriverAssert(handle == ((int)driverCtx));
+	int retErr = HDMI_CEC_IO_SUCCESS;
+
+	//printf("HdmiCecAddLogicalAddress from IARM driver logicalAddresses set  = %d \n", logicalAddresses);
+
+	IARM_Result_t ret = IARM_RESULT_SUCCESS;
+	IARM_Bus_CECMgr_AddLogicalAddress_Param_t data;
+
+	memset(&data, 0, sizeof(data));
+	data.logicalAddress = logicalAddresses;
+
+	ret = IARM_Bus_Call(IARM_BUS_CECMGR_NAME,IARM_BUS_CECMGR_API_AddLogicalAddress,(void *)&data, sizeof(data));
+	if( IARM_RESULT_SUCCESS != ret)
+	{
+		//printf("Iarm call failed retval = %d \n", ret);
+		retErr = HDMI_CEC_IO_INVALID_STATE;
+	}
+
+	DRIVER_UNLOCK();
+
+	return retErr;
 }
 
 int HdmiCecRemoveLogicalAddress(int handle, int logicalAddresses)

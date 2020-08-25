@@ -90,6 +90,9 @@ void MessageDecoder::decode(const CECFrame &in_)
 	case GIVE_PHYSICAL_ADDRESS:
 		processor.process(GivePhysicalAddress(), header);
 		break;
+	case REPORT_PHYSICAL_ADDRESS:
+		processor.process(ReportPhysicalAddress(in), header);
+		break;
 	case GIVE_DEVICE_VENDOR_ID:
 		processor.process(GiveDeviceVendorID(), header);
 		break;

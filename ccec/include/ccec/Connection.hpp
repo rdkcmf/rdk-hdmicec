@@ -71,11 +71,17 @@ public:
 	void send(const CECFrame &frame, int timeout = 0);
 	void sendTo(const LogicalAddress &to, const CECFrame &frame, int timeout = 0);
 	void sendToAsync(const LogicalAddress &to, const CECFrame &frame);
-
+	void poll(const LogicalAddress &from, const Throw_e &doThrow);
+	void ping(const LogicalAddress &from, const LogicalAddress &to, const Throw_e &doThrow);
+		
 	void sendAsync(const CECFrame &frame);
 
 	const LogicalAddress & getSource(void) {
 		return source;
+	}
+	
+	const void setSource(LogicalAddress &from) {
+		source = from;
 	}
 
 private:
