@@ -121,6 +121,27 @@ void LibCCEC::term()
 }
 
 /**
+ * @brief This function is used to add logical address
+ * to the driver, so that it can ACK if there a direct messages received.
+ *
+ * @param[in] logical address of device.
+ *
+ * @return success or throw exceptions if there is error.
+ */
+int LibCCEC::addLogicalAddress(const LogicalAddress &source)
+{
+	//printf("Entered LibCCEC::getLogicalAddress \n");
+	if (!initialized) {
+		throw InvalidStateException();
+	}
+
+	Driver::getInstance().addLogicalAddress(source);
+
+	return true;
+}
+
+
+/**
  * @brief This function is used to get CEC device logical address
  * starting the connection.
  *

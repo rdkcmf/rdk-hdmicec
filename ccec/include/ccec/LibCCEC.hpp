@@ -48,6 +48,7 @@ public:
 	void term(void);
 	int getLogicalAddress(int devType);
 	void getPhysicalAddress(unsigned int *physicalAddress);
+	int addLogicalAddress(const LogicalAddress &source);
 
 private:
 //	int logicalAddresses;

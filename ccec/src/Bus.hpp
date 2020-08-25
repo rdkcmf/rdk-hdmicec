@@ -57,6 +57,8 @@ public:
     void removeFrameListener(FrameListener *listener);
     void send(const CECFrame &frame, int timeout = 0);
     void sendAsync(const CECFrame &frame);
+	void poll(const LogicalAddress &from, const LogicalAddress &to);
+	void ping(const LogicalAddress &from, const LogicalAddress &to);
 
 	void start(void);
 	void stop(void);

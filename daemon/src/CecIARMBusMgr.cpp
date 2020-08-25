@@ -74,6 +74,7 @@ static volatile Connection *m_connection = 0;
 
 static IARM_Result_t _Send(void *arg);
 static IARM_Result_t _GetLogicalAddress(void *arg);
+static IARM_Result_t _AddLogicalAddress(void *arg);
 static IARM_Result_t _GetPhysicalAddress(void *arg);
 static IARM_Result_t _Enable(void *arg);
 
@@ -252,6 +253,7 @@ IARM_Result_t CECIARMMgr::init(void)
     IARM_Bus_RegisterEvent(IARM_BUS_CECMGR_EVENT_MAX);
     IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_Send,_Send);
     IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_GetLogicalAddress,_GetLogicalAddress);
+	IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_AddLogicalAddress,_AddLogicalAddress);
     IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_GetPhysicalAddress,_GetPhysicalAddress);
     IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_Enable, _Enable);
     IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_ENABLE, cecMgrEventHandler);
@@ -443,6 +445,37 @@ static IARM_Result_t _GetLogicalAddress(void *arg)
 
 	return retCode;
 }
+
+/**
+ * @brief This function is used to add the logical address of own devices, so driver can ACK while receving direct messages.
+ *
+ * @param[in] arg Address of IARM_Bus_CECMgr_AddLogicalAddress_Param_t structure, the 
+ * logical address to be added.
+ *
+ * @return retCode Returns IARM_RESULT_SUCCESS on success condition and
+ * IARM_RESULT_INVALID_STATE on failure condition.
+ */
+static IARM_Result_t _AddLogicalAddress(void *arg)
+{
+	IARM_Result_t retCode = IARM_RESULT_SUCCESS;
+	IARM_Bus_CECMgr_AddLogicalAddress_Param_t *param = (IARM_Bus_CECMgr_AddLogicalAddress_Param_t *) arg;
+	LogicalAddress source(param->logicalAddress);
+
+	CCEC_LOG( LOG_DEBUG, "Inside _AddLogicalAddress : for logicalAddress : %d  >>>>>>\r\n",param->logicalAddress);
+	try{
+		param->logicalAddress = LibCCEC::getInstance().addLogicalAddress(source);
+	}
+	catch(Exception &e)
+	{
+		CCEC_LOG(LOG_EXP, "_AddLogicalAddress caught %s \r\n",e.what());
+		retCode = IARM_RESULT_INVALID_STATE;
+	}
+
+	CCEC_LOG( LOG_DEBUG, "Inside _AddLogicalAddress : Logical Address : %d  >>>>>>\r\n",param->logicalAddress);
+
+	return retCode;
+}
+
 
 static IARM_Result_t _GetPhysicalAddress(void *arg)
 {
