@@ -18,6 +18,7 @@
 ##########################################################################
 [Unit]
 Description= Cec Daemon Path
+OnFailure=path-fail-notifier@%n.service
 
 [Path]
 PathExists=/tmp/cecdaemon-enabled
