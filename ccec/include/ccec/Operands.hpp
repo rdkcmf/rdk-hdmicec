@@ -315,6 +315,66 @@ class PhysicalAddress : public CECBytes
 	PhysicalAddress(const CECFrame &frame, size_t startPos) : CECBytes (frame, startPos, MAX_LEN) {
     };
 
+	PhysicalAddress(std::string &addr)         : CECBytes (NULL, 0) {
+		uint8_t byte[4];
+		uint8_t bytes[MAX_LEN];
+		size_t dotposition = 0;
+		int i = 0;
+
+		Assert((addr.length() != 0 && addr.length() == 7));
+		
+		while (addr.length()    && i < 4)
+		{
+		  byte[i++] = stoi(addr,&dotposition,16);
+		  if (addr.length() > 1)
+		  {
+		   	 addr = addr.substr(dotposition+1);
+		  }
+		  else
+		  {
+		 	 break; 	
+		  }
+		}
+		
+        bytes[0] = (byte[0] & 0x0F)<< 4 | (byte[1] & 0x0F);
+        bytes[1] = (byte[2] & 0x0F)<< 4 | (byte[3] & 0x0F);
+        str.insert(str.begin(), bytes, bytes + MAX_LEN);
+    }
+
+	const uint8_t getByteValue( int index) const {
+		uint8_t val;
+
+		Assert(index < 4);
+
+		switch(index)
+		{
+			case 0: 
+			{
+				val = (int) ((str[0] & 0xF0) >> 4);
+			}
+				break;
+			case 1: 
+			{
+				val = (int) (str[0] & 0x0F);
+			}
+				break;
+			
+			case 2: 
+			{
+				val = (int) ((str[1] & 0xF0) >> 4);
+			}
+				break;
+
+			case 3: 
+			{
+				val = (int) (str[1] & 0x0F);
+			}
+				break;
+		}
+
+		return val;
+    }
+
     const std::string toString(void) const {
 		std::stringstream stream;
         stream << (int)((str[0] & 0xF0) >> 4)<< "." << (int)(str[0] & 0x0F) << "." << (int)((str[1] & 0xF0) >> 4) << "." << (int)(str[1] & 0x0F);
