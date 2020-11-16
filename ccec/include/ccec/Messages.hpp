@@ -463,6 +463,27 @@ public:
     PhysicalAddress toSink;
 };
 
+class UserControlPressed: public DataBlock
+{
+public:
+    Op_t opCode(void) const {return USER_CONTROL_PRESSED;}
+
+	UserControlPressed( const UICommand &command ) : uiCommand(command) { }
+
+	CECFrame &serialize(CECFrame &frame) const {
+		return uiCommand.serialize(frame);
+	}
+
+	UICommand uiCommand;
+};
+
+class UserControlReleased: public DataBlock
+{
+public:
+    Op_t opCode(void) const {return USER_CONTROL_RELEASED;}
+};
+
+
 class Polling : public DataBlock
 {
 public:
