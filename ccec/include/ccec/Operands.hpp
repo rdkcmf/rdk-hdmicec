@@ -570,6 +570,30 @@ public:
 protected:
 	size_t getMaxLen() const {return MAX_LEN;}
 };
+
+class UICommand : public CECBytes 
+{
+public:
+    enum {
+        MAX_LEN = 1,
+    };
+
+    enum {
+		UI_COMMAND_POWER_OFF_FUNCTION = 0x6C,
+        UI_COMMAND_POWER_ON_FUNCTION = 0x6D,
+    };
+
+    UICommand(int command) : CECBytes((uint8_t)command) { };
+
+    int toInt(void) const {
+        return str[0];
+    }
+
+protected:
+	size_t getMaxLen() const {return MAX_LEN;}
+};
+
+
 CCEC_END_NAMESPACE
 
 #endif
