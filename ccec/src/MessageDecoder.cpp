@@ -25,7 +25,6 @@
 * @{
 **/
 
-
 #include "ccec/CECFrame.hpp"
 #include "ccec/Header.hpp"
 #include "ccec/Operand.hpp"
@@ -147,6 +146,12 @@ void MessageDecoder::decode(const CECFrame &in_)
 	case ABORT:
 		processor.process(Abort(), header);
 		break;
+        case INITIATE_ARC:
+             processor.process(InitiateArc(), header);
+                break;
+       case TERMINATE_ARC:
+             processor.process(TerminateArc(), header);
+             break;
 	default:
         CCEC_LOG( LOG_DEBUG, "Unhandled Message Received \n");
         OpCode(in_, OPCODE_OFFSET).print();

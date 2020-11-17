@@ -489,6 +489,43 @@ class Polling : public DataBlock
 public:
     Op_t opCode(void) const {return POLLING;}
 };
+
+class RequestArcInitiation:public DataBlock
+{
+  public:
+    Op_t opCode(void) const {return REQUEST_ARC_INITIATION;}
+
+};
+
+class ReportArcInitiation:public DataBlock
+{
+  public:
+    Op_t opCode(void) const {return REPORT_ARC_INITIATED;}
+
+};
+class RequestArcTermination:public DataBlock
+{
+  public:
+    Op_t opCode(void) const {return REQUEST_ARC_TERMINATION;}
+
+};
+class ReportArcTermination:public DataBlock
+{
+  public:
+    Op_t opCode(void) const {return REPORT_ARC_TERMINATED;}
+
+};
+class InitiateArc:public DataBlock
+{
+  public:
+    Op_t opCode(void) const {return INITIATE_ARC;}
+};
+class TerminateArc:public DataBlock
+{
+  public:
+    Op_t opCode(void) const {return TERMINATE_ARC;}
+};
+
 #endif
 
 
