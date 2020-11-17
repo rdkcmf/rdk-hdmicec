@@ -87,7 +87,8 @@ public:
 	virtual void process (const FeatureAbort &msg, const Header &header) 				{header.print();msg.print();}
 	virtual void process (const Abort &msg, const Header &header) 						{header.print();msg.print();}
 	virtual void process (const Polling &msg, const Header &header) 					{header.print();msg.print();}
-
+        virtual void process (const InitiateArc &msg, const Header &header)                             {header.print();msg.print();}
+        virtual void process (const TerminateArc &msg, const Header &header)                             {header.print();msg.print();}
 	virtual ~MessageProcessor(void) {}
 
 private:
