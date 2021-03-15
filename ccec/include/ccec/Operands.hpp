@@ -26,7 +26,6 @@
 * @{
 **/
 
-
 #ifndef HDMI_CCEC_OPERANDS_HPP_
 #define HDMI_CCEC_OPERANDS_HPP_
 #include <stdint.h>
@@ -40,6 +39,7 @@
 #include "CCEC.hpp"
 #include "Assert.hpp"
 #include "Operand.hpp"
+#include "Util.hpp"
 #include "ccec/CECFrame.hpp"
 #include "ccec/Exception.hpp"
 
@@ -180,7 +180,16 @@ public :
 			"Refused",
 			"Unable to determine",
 		};
-		return names_[str[0]];
+
+		if (validate())
+		{
+			return names_[str[0]];
+		}
+		else
+		{
+			CCEC_LOG(LOG_WARN,"Unknown abort reason:%x\n", str[0]);
+			return "Unknown";
+		}
 	}
 
 	bool validate(void) const {
@@ -231,7 +240,15 @@ public :
 				"Video Processor",
 		};
 
-		return names_[str[0]];
+		if (validate())
+		{
+			return names_[str[0]];
+		}
+		else
+		{
+			CCEC_LOG(LOG_WARN,"Unknown device type:%x\n", str[0]);
+			return "Unknown";
+		}
 	}
 
 	bool validate(void) const {
@@ -440,12 +457,21 @@ public:
     	"Specific Use",
     	"Broadcast/Unregistered",
     	};
-    	return names_[str[0]];
+
+	if (validate())
+	{
+		return names_[str[0]];
+	}
+	else
+	{
+		CCEC_LOG(LOG_WARN,"Unknown logical address:%x\n", str[0]);
+		return "Unknown";
+	}
     }
 
-    int toInt(void) const {
-        return str[0];
-    }
+	int toInt(void) const {
+		return str[0];
+	}
 
 	bool validate(void) const {
 		return ((str[0] <= BROADCAST) && (str[0] >= TV));
@@ -501,14 +527,14 @@ public:
     	V_1_4,
     };
 
-    Version(int version) : CECBytes((uint8_t)version) { };
+	Version(int version) : CECBytes((uint8_t)version) { };
 
 	bool validate(void) const {
 		return ((str[0] <= V_1_4) && (str[0] >= V_1_3a));
 	}
 
-    const std::string toString(void) const
-    {
+	const std::string toString(void) const
+	{
 		static const char *names_[] = {
 				"Reserved",
 				"Reserved",
@@ -516,9 +542,18 @@ public:
 				"Reserved",
 				"Version 1.3a",
 				"Version 1.4",
-    	};
-    	return names_[str[0]];
-    }
+		};
+
+		if (validate())
+		{
+			return names_[str[0]];
+		}
+		else
+		{
+			CCEC_LOG(LOG_WARN,"Unknown version:%x\n", str[0]);
+			return "Unknown";
+		}
+	}
 
 	Version (const CECFrame &frame, size_t startPos) : CECBytes (frame, startPos, MAX_LEN) {
     };
@@ -542,30 +577,40 @@ public:
         POWER_STATUS_FEATURE_ABORT = 0x05,
    };
 
-    PowerStatus(int status) : CECBytes((uint8_t)status) { };
+	PowerStatus(int status) : CECBytes((uint8_t)status) { };
 
 	bool validate(void) const {
 		return ((str[0] <= IN_TRANSITION_ON_TO_STANDBY)/* && (str[0] >= ON)*/);
 	}
 
-    const std::string toString(void) const
-    {
+	const std::string toString(void) const
+	{
 		static const char *names_[] = {
-            "On",
-            "Standby",
-            "In transition Standby to On",
-            "In transition On to Standby",
-            "Not Known",
-            "Feature Abort"
-    	};
-    	return names_[str[0]];
-    }
-    int toInt(void) const {
-        return str[0];
-    }
+			"On",
+			"Standby",
+			"In transition Standby to On",
+			"In transition On to Standby",
+			"Not Known",
+			"Feature Abort"
+		};
+
+		if (validate())
+		{
+			return names_[str[0]];
+		}
+		else
+		{
+			CCEC_LOG(LOG_WARN,"Unknown powerstatus:%x\n", str[0]);
+			return "Unknown";
+		}
+	}
+
+	int toInt(void) const {
+		return str[0];
+	}
 
 	PowerStatus (const CECFrame &frame, size_t startPos) : CECBytes (frame, startPos, MAX_LEN) {
-    };
+	};
 
 protected:
 	size_t getMaxLen() const {return MAX_LEN;}
