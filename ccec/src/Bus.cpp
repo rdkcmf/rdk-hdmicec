@@ -109,10 +109,11 @@ void Bus::stop(void)
 CCEC_LOG( LOG_INFO, "Bus::stop is called\r\n");
 
 	started = false;
-	reader.stop(false);
-	writer.stop(false);
+	reader.stop(true);
+	writer.stop(true);
 
 	Driver::getInstance().close();
+	CCEC_LOG( LOG_INFO, "Bus::stop is called reader isstop :%d writer isstop :%d \r\n",reader.isStopped(),writer.isStopped());
 }
 
 /**
@@ -193,6 +194,7 @@ void Bus::Reader::stop(bool block)
 
 		CCEC_LOG( LOG_DEBUG, "Bus::Reader::stop::stop completed\r\n");
 	}
+
 }
 
 /**
@@ -308,6 +310,7 @@ void Bus::Writer::stop(bool block)
 
 		CCEC_LOG( LOG_DEBUG, "Bus::Writer::stop::stop completed\r\n");
 	}
+
 }
 
 /**
