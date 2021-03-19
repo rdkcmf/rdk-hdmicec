@@ -212,9 +212,9 @@ public:
                         }
                         if (in.length() > OPCODE_OFFSET) {
                              opname = GetOpName(OpCode(in,OPCODE_OFFSET).opCode());
-                        }
-                        CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s \n",header.from.toString().c_str(), \
+                             CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s \n",header.from.toString().c_str(), \
                                            header.to.toString().c_str(), opname, strBuffer);
+                        }
 			CCEC_LOG( LOG_DEBUG, "Broadcasting msg on IARMBus\r\n");
 			IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_RECV, (void *)&dataRcvd, sizeof(dataRcvd));
 		}
@@ -389,9 +389,9 @@ static IARM_Result_t _Send(void *arg)
         }
         if (frameIn.length() > OPCODE_OFFSET) {
             opname = GetOpName(OpCode(frameIn,OPCODE_OFFSET).opCode());
+            CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s\n",header.from.toString().c_str(), \
+               header.to.toString().c_str(), opname, strBuffer);
         }
-        CCEC_LOG( LOG_INFO, "%s to %s : opcode: %s :%s\n",header.from.toString().c_str(), \
-            header.to.toString().c_str(), opname, strBuffer);
 	if (m_connection) {
 		try{
 			//CCEC_LOG( LOG_DEBUG, "_Send sending >>>>>>\r\n");

@@ -331,7 +331,7 @@ void Bus::send(const CECFrame &frame, int timeout)
                 CCEC_LOG( LOG_DEBUG, "Bus::send write done\r\n");
             }
             catch (Exception &e){
-                CCEC_LOG( LOG_EXP, "Bus::send exp caught [%s] \r\n", e.what());
+                if( frame.length() > 1) CCEC_LOG( LOG_EXP, "Bus::send exp caught [%s] \r\n", e.what());
                 throw;
             }
         }
@@ -348,7 +348,7 @@ void Bus::send(const CECFrame &frame, int timeout)
                     retry = 0;
                 }
                 catch (Exception &e){
-                    CCEC_LOG( LOG_EXP, "Bus::send exp caught [%s], retry [%d]\r\n", e.what(), retry);
+                    if( frame.length() > 1) CCEC_LOG( LOG_EXP, "Bus::send exp caught [%s], retry [%d]\r\n", e.what(), retry);
                     if (retry == 0) {
                         throw;
                     }
