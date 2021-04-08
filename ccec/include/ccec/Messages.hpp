@@ -463,6 +463,106 @@ public:
     PhysicalAddress toSink;
 };
 
+class RequestShortAudioDescriptor : public DataBlock
+{
+
+public:
+    Op_t opCode(void) const {return REQUEST_SHORT_AUDIO_DESCRIPTOR;}
+
+      RequestShortAudioDescriptor(const std::vector<uint8_t> formatid, const std::vector<uint8_t> audioFormatCode, uint8_t number_of_descriptor = 1)
+      {
+	    uint8_t audioFormatIdCode;
+	    numberofdescriptor = number_of_descriptor > 4 ? 4 : number_of_descriptor;
+	    for (uint8_t i=0 ; i < numberofdescriptor ;i++)
+	    {
+		   audioFormatIdCode = (formatid[i] << 6) | ( (audioFormatCode[i])& 0x3f) ;
+		   requestAudioFormat.push_back(RequestAudioFormat(audioFormatIdCode));
+	    }
+       }
+	 /* called by the messaged_decoder */
+     RequestShortAudioDescriptor(const CECFrame &frame, int startPos = 0)
+     {
+	uint8_t len = frame.length();
+        numberofdescriptor = len > 4 ? 4:len;
+        for (uint8_t i=0; i< numberofdescriptor ; i++)
+        {
+	   requestAudioFormat.push_back(RequestAudioFormat(frame,startPos + i ));
+        }
+     }
+     /* called by the message encoder */
+     CECFrame &serialize(CECFrame &frame) const {
+
+	  for (uint8_t i=0; i < numberofdescriptor ; i++)
+	  {
+	  requestAudioFormat[i].serialize(frame);
+
+	  }
+	  return frame;
+	}
+
+     void print(void) const {
+	    uint8_t i=0;
+		for(i=0;i < numberofdescriptor;i++)
+		{
+
+                  CCEC_LOG( LOG_DEBUG,"audio format id %d audioFormatCode : %s\n",requestAudioFormat[i].getAudioformatId(),requestAudioFormat[i].toString());
+
+		}
+      }
+     std::vector<RequestAudioFormat> requestAudioFormat ;
+     uint8_t  numberofdescriptor;
+};
+class ReportShortAudioDescriptor : public DataBlock
+{
+
+public:
+    Op_t opCode(void) const {return REPORT_SHORT_AUDIO_DESCRIPTOR;}
+
+	      ReportShortAudioDescriptor( const std::vector <uint32_t> shortaudiodescriptor, uint8_t numberofdescriptor = 1)
+	      {
+
+	       	uint8_t bytes[3];
+	        numberofdescriptor = numberofdescriptor > 4 ? 4 : numberofdescriptor;
+	        for (uint8_t i=0; i < numberofdescriptor ;i++)
+	        {
+                  bytes[0] = (shortaudiodescriptor[i] & 0xF);
+	          bytes[1] = ((shortaudiodescriptor[i] >> 8) & 0xF);
+	          bytes[2] = ((shortaudiodescriptor[i] >> 16) & 0xF);
+	          shortAudioDescriptor.push_back(ShortAudioDescriptor(bytes));
+
+	        }
+	      }
+	       /* called by the messaged_decoder */
+             ReportShortAudioDescriptor(const CECFrame &frame, int startPos = 0)
+            {
+               numberofdescriptor = (frame.length())/3;
+               for (uint8_t i=0; i< numberofdescriptor ;i++)
+	       {
+	          shortAudioDescriptor.push_back(ShortAudioDescriptor(frame,startPos + i*3 ));
+	       }
+             }
+
+	     /* called by the message encoder*/
+	   CECFrame &serialize(CECFrame &frame) const {
+		 for (uint8_t i=0; i < numberofdescriptor ; i++)
+		 {
+		 //just do the append of the stored cec bytes
+		 shortAudioDescriptor[i].serialize(frame);
+
+		 }
+		 return frame;
+	   }
+           void print(void) const {
+                for(uint8_t i=0;i < numberofdescriptor;i++)
+                {
+			CCEC_LOG( LOG_DEBUG," audioFormatCode : %s audioFormatCode %d Atmos = %d\n",shortAudioDescriptor[i].toString(),shortAudioDescriptor[i].getAudioformatCode(),shortAudioDescriptor[i].getAtmosbit());
+		}
+	   }
+    std::vector <ShortAudioDescriptor> shortAudioDescriptor ;
+    uint8_t numberofdescriptor;
+};
+
+
 class UserControlPressed: public DataBlock
 {
 public:

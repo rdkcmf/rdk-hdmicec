@@ -152,6 +152,13 @@ void MessageDecoder::decode(const CECFrame &in_)
        case TERMINATE_ARC:
              processor.process(TerminateArc(), header);
              break;
+	 case REQUEST_SHORT_AUDIO_DESCRIPTOR:
+             processor.process(RequestShortAudioDescriptor(in), header);
+             break;
+
+	case REPORT_SHORT_AUDIO_DESCRIPTOR:
+	     processor.process(ReportShortAudioDescriptor(in), header);
+	     break;
 	default:
         CCEC_LOG( LOG_DEBUG, "Unhandled Message Received \n");
         OpCode(in_, OPCODE_OFFSET).print();

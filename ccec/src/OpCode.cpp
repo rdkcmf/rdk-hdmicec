@@ -211,6 +211,9 @@ const char *GetOpName(Op_t op)
 	case REPORT_AUDIO_STATUS:
 		name = "Report Name Status";
 		break;
+	case REQUEST_SHORT_AUDIO_DESCRIPTOR:
+		name = "Request Short Audio Descriptor";
+		break;
 	case REPORT_SHORT_AUDIO_DESCRIPTOR:
 		name = "Report Short Audio Descriptor";
 		break;

@@ -616,7 +616,160 @@ protected:
 	size_t getMaxLen() const {return MAX_LEN;}
 };
 
-class UICommand : public CECBytes 
+class RequestAudioFormat : public CECBytes
+{
+  public :
+    enum {
+        MAX_LEN = 1,
+    };
+
+	enum {
+
+          SAD_FMT_CODE_LPCM =1 ,		       // 1
+ 	  SAD_FMT_CODE_AC3,	      // 2
+ 	  SAD_FMT_CODE_MPEG1,		    //   3
+          SAD_FMT_CODE_MP3,	      // 4
+          SAD_FMT_CODE_MPEG2,	  //     5
+	  SAD_FMT_CODE_AAC_LC,	      // 6
+          SAD_FMT_CODE_DTS,	      // 7
+          SAD_FMT_CODE_ATRAC,	      // 8
+          SAD_FMT_CODE_ONE_BIT_AUDIO,  // 9
+          SAD_FMT_CODE_ENHANCED_AC3,	 // 10
+          SAD_FMT_CODE_DTS_HD,	 // 11
+          SAD_FMT_CODE_MAT,	    //  12
+          SAD_FMT_CODE_DST,	    //  13
+          SAD_FMT_CODE_WMA_PRO, 	 // 14
+          SAD_FMT_CODE_EXTENDED,		//  15
+	};
+	RequestAudioFormat(uint8_t AudioFormatIdCode) : CECBytes((uint8_t)AudioFormatIdCode) { };
+        RequestAudioFormat(const CECFrame &frame, size_t startPos) : CECBytes (frame, startPos,MAX_LEN) { };
+	const std::string toString(void) const
+        {
+		static const char *AudioFormtCode[] = {
+				"Reserved",
+				"LPCM",
+				"AC3",
+				"MPEG1",
+				"MP3",
+				"MPEG2",
+				"AAC",
+				"DTS",
+				"ATRAC",
+				"One Bit Audio",
+				"E-AC3",
+				"DTS-HD",
+				"MAT",
+				"DST",
+				"WMA PRO",
+				"Reserved for Audio format 15",
+    	};
+		/* audio formt code uses 6 bits but codes are defined only for 15 codes */
+    	return AudioFormtCode[str[0] & 0xF];
+        }
+	int getAudioformatId(void) const {
+
+            return (str[0]>>6);
+		};
+
+	int getAudioformatCode(void) const {
+
+		return (str[0] & 0x3F);
+
+	};
+protected:
+	size_t getMaxLen() const {return MAX_LEN;}
+};
+
+class ShortAudioDescriptor : public CECBytes
+{
+  public :
+    enum {
+        MAX_LEN = 3,
+    };
+
+	enum {
+
+          SAD_FMT_CODE_LPCM =1 ,		       // 1
+ 		  SAD_FMT_CODE_AC3,	      // 2
+ 		  SAD_FMT_CODE_MPEG1,		    //   3
+          SAD_FMT_CODE_MP3,	      // 4
+          SAD_FMT_CODE_MPEG2,	  //     5
+		  SAD_FMT_CODE_AAC_LC,	      // 6
+          SAD_FMT_CODE_DTS,	      // 7
+          SAD_FMT_CODE_ATRAC,	      // 8
+          SAD_FMT_CODE_ONE_BIT_AUDIO,  // 9
+          SAD_FMT_CODE_ENHANCED_AC3,	 // 10
+          SAD_FMT_CODE_DTS_HD,	 // 11
+          SAD_FMT_CODE_MAT,	    //  12
+          SAD_FMT_CODE_DST,	    //  13
+          SAD_FMT_CODE_WMA_PRO, 	 // 14
+          SAD_FMT_CODE_EXTENDED,		//  15
+
+	};
+
+	ShortAudioDescriptor(uint8_t *buf, size_t len = MAX_LEN) : CECBytes(buf, MAX_LEN) {
+               Assert(len >= MAX_LEN);
+        };
+        ShortAudioDescriptor(const CECFrame &frame, size_t startPos) : CECBytes (frame, startPos,MAX_LEN) {
+		   };
+	const std::string toString(void) const
+        {
+
+		static const char *AudioFormtCode[] = {
+				"Reserved",
+				"LPCM",
+				"AC3",
+				"MPEG1",
+				"MP3",
+				"MPEG2",
+				"AAC",
+				"DTS",
+				"ATRAC",
+				"One Bit Audio",
+				"E-AC3",
+				"DTS-HD",
+				"MAT",
+				"DST",
+				"WMA PRO",
+				"Reserved for Audio format 15",
+    	        };
+   	/* audio formt code uses 6 bits but codes are defined only for 15 codes */
+        return AudioFormtCode[(str[0] >> 3) & 0xF];
+    }
+
+	uint32_t getAudiodescriptor(void) const	{
+         uint32_t audiodescriptor;
+
+		audiodescriptor =  (str[0] | str[1] << 8 | str[2] << 16);
+		return audiodescriptor;
+
+	};
+
+	int getAudioformatCode(void) const	{
+         uint8_t audioformatCode;
+         audioformatCode = ((str[0] >> 3) & 0xF);
+		 return audioformatCode;
+
+	};
+	uint8_t getAtmosbit(void) const {
+
+        bool atmosSupport = false;
+		if ((((str[0] >> 3) & 0xF) >= 9) && (((str[0] >> 3) & 0xF) <= 15))
+		{
+                      if((str[2] & 0x3) != 0)
+                      {
+                         atmosSupport = true;
+                      }
+
+		}
+            return atmosSupport;
+	};
+
+protected:
+	size_t getMaxLen() const {return MAX_LEN;}
+
+};
+class UICommand : public CECBytes
 {
 public:
     enum {

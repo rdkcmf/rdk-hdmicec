@@ -89,6 +89,8 @@ public:
 	virtual void process (const Polling &msg, const Header &header) 					{header.print();msg.print();}
         virtual void process (const InitiateArc &msg, const Header &header)                             {header.print();msg.print();}
         virtual void process (const TerminateArc &msg, const Header &header)                             {header.print();msg.print();}
+	virtual void process (const RequestShortAudioDescriptor &msg,const Header &header)               {header.print();msg.print();}
+	virtual void process (const ReportShortAudioDescriptor &msg, const Header &header)               {header.print();msg.print();}
 	virtual ~MessageProcessor(void) {}
 
 private:
