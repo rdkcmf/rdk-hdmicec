@@ -39,7 +39,7 @@
 #include "libIBus.h"
 #include "ccec/drivers/hdmi_cec_driver.h"
 #include "ccec/drivers/iarmbus/CecIARMBusMgr.h"
-
+#include "safec_lib.h"
 
 #define CECDriverAssert(cond) do\
 {\
@@ -273,7 +273,7 @@ int HdmiCecTxAsync(int handle, const unsigned char *buf, int len)
 	IARM_Bus_CECMgr_EventData_t dataToSend;
 	memset(&dataToSend, 0, sizeof(dataToSend));
 	dataToSend.length = len;
-	memcpy(dataToSend.data, buf, len);
+	MEMCPY_S(dataToSend.data,sizeof(dataToSend.data), buf, len);
     IARM_Bus_BroadcastEvent(IARM_BUS_CECMGR_NAME, (IARM_EventId_t) IARM_BUS_CECMGR_EVENT_SEND, (void *)&dataToSend, sizeof(dataToSend));
 
 	DRIVER_UNLOCK();
@@ -290,7 +290,7 @@ int HdmiCecTx(int handle, const unsigned char *buf, int len, int *result)
 
 	memset(&dataToSend, 0, sizeof(dataToSend));
 	dataToSend.length = len;
-	memcpy(dataToSend.data, buf, len);
+	MEMCPY_S(dataToSend.data,sizeof(dataToSend.data), buf, len);
 	ret = IARM_Bus_Call(IARM_BUS_CECMGR_NAME,IARM_BUS_CECMGR_API_Send,(void *)&dataToSend, sizeof(dataToSend));
 	if( IARM_RESULT_SUCCESS != ret)
 	{

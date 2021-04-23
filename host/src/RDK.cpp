@@ -52,7 +52,7 @@
 #include "ccec/Host.hpp"
 #include "ccec/host/RDK.hpp"
 
-
+#include "safec_lib.h"
 #define MAX_LENGTH_OF_OSD_NAME 15
 
 typedef struct _DeviceStatus_t
@@ -334,13 +334,14 @@ CECHost_Err_t CECHost_SetPowerState(int32_t state)
  */
 CECHost_Err_t CECHost_GetOSDName(uint8_t *buf, size_t *len)
 {
+    size_t buf_size= *len;
 	if (!buf || !len || *len == 0) {
 		return CECHost_ERR_INVALID;
 	}
 
 	size_t nameLen = strlen(osdName);
 	if (*len > nameLen) *len = nameLen;
-    memcpy((char *)buf, (char *)osdName, *len);
+    MEMCPY_S((char *)buf,buf_size+1, (char *)osdName, *len);
     return CECHost_ERR_NONE;
 }
 
@@ -421,7 +422,7 @@ static IARM_Result_t _GetDevStatus(void *arg)
         IARM_Bus_CECHost_GetDeviceStatus_Param_t *param = (IARM_Bus_CECHost_GetDeviceStatus_Param_t *)arg;
         if(param->devices)
         {
-            memcpy(param->devices,_deviceStatus,sizeof(_deviceStatus));
+	    MEMCPY_S(param->devices,sizeof(param->devices),_deviceStatus,sizeof(_deviceStatus));
             CCEC_LOG( LOG_DEBUG, "RDKHOST::_GetDevStatus() success \n");
             pthread_mutex_unlock(&devStatMutex);
             return IARM_RESULT_SUCCESS;
@@ -438,7 +439,7 @@ static IARM_Result_t _GetOSDName(void *arg)
         IARM_Bus_CECHost_GetOSDName_Param_t *param = (IARM_Bus_CECHost_GetOSDName_Param_t *)arg;
         if(NULL != param->name)
         {
-            memcpy(param->name,osdName,sizeof(osdName));
+            MEMCPY_S(param->name,sizeof(param->name), osdName, sizeof(osdName));
             CCEC_LOG( LOG_DEBUG, "RDKHost::_GetOSDName() : %s::%s\n",param->name,osdName);
             return IARM_RESULT_SUCCESS;
         }

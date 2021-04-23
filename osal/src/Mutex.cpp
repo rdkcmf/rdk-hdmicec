@@ -26,11 +26,11 @@
 * @{
 **/
 
-
+#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
-
+#include "safec_lib.h"
 #include "osal/Mutex.hpp"
 #include "osal/Util.hpp"
 
@@ -49,7 +49,7 @@ Mutex::Mutex(void) : nativeHandle(NULL)
 Mutex::Mutex(const Mutex &rhs)
 {
     nativeHandle = Malloc(sizeof(pthread_mutex_t));
-    memcpy(nativeHandle, rhs.nativeHandle, sizeof(pthread_mutex_t));
+    MEMCPY_S(nativeHandle,sizeof(pthread_mutex_t), rhs.nativeHandle, sizeof(pthread_mutex_t));
 }
 
 Mutex & Mutex::operator = (const Mutex &rhs)
