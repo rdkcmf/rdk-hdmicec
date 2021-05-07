@@ -561,7 +561,33 @@ public:
     std::vector <ShortAudioDescriptor> shortAudioDescriptor ;
     uint8_t numberofdescriptor;
 };
+class SystemAudioModeRequest : public DataBlock
+{
 
+public:
+    Op_t opCode(void) const {return SYSTEM_AUDIO_MODE_REQUEST;}
+	SystemAudioModeRequest(const PhysicalAddress &physicaladdress = {0xf,0xf,0xf,0xf} ): physicaladdress(physicaladdress) {}
+	 /* called by the messaged_decoder */
+	SystemAudioModeRequest(const CECFrame &frame, int startPos = 0):physicaladdress(frame, startPos)
+        {
+           if (frame.length() == 0 )
+	   {
+              physicaladdress= PhysicalAddress((uint8_t) 0xf,(uint8_t) 0xf,(uint8_t)0xf,(uint8_t)0xf);
+	   }
+        }
+      CECFrame &serialize(CECFrame &frame) const {
+        if ( (physicaladdress.getByteValue(3) == 0xF) && (physicaladdress.getByteValue(2) == 0xF) && (physicaladdress.getByteValue(1) == 0xF) &&  (physicaladdress.getByteValue(0) == 0xF))
+	{
+	    return frame;
+	 } else{
+                return physicaladdress.serialize(frame);
+	 }
+	 }
+     void print(void) const {
+        CCEC_LOG( LOG_DEBUG,"Set SystemAudioModeRequest : %s\n",physicaladdress.toString().c_str());
+    }
+  PhysicalAddress physicaladdress;
+};
 
 class UserControlPressed: public DataBlock
 {
