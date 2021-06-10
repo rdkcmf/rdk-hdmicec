@@ -588,6 +588,22 @@ public:
     }
   PhysicalAddress physicaladdress;
 };
+class SetSystemAudioMode: public DataBlock
+{
+public:
+    Op_t opCode(void) const {return SET_SYSTEM_AUDIO_MODE;}
+
+	SetSystemAudioMode( const SystemAudioStatus &status ) : status(status) { }
+
+	SetSystemAudioMode(const CECFrame &frame, int startPos = 0) : status(frame, startPos)
+       {
+       }
+	CECFrame &serialize(CECFrame &frame) const {
+		return status.serialize(frame);
+	}
+
+	SystemAudioStatus status;
+};
 
 class UserControlPressed: public DataBlock
 {

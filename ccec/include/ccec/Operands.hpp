@@ -769,6 +769,52 @@ protected:
 	size_t getMaxLen() const {return MAX_LEN;}
 
 };
+class SystemAudioStatus : public CECBytes
+{
+public:
+    enum {
+        MAX_LEN = 1,
+    };
+
+    enum {
+            OFF = 0x00,
+	    ON = 0x01,
+         };
+
+	SystemAudioStatus(int status) : CECBytes((uint8_t)status) { };
+
+	bool validate(void) const {
+		return ((str[0] <= ON) );
+	}
+
+	const std::string toString(void) const
+	{
+		static const char *names_[] = {
+			"Off",
+			"On",
+		};
+
+		if (validate())
+		{
+			return names_[str[0]];
+		}
+		else
+		{
+			CCEC_LOG(LOG_WARN,"Unknown SystemAudioStatus:%x\n", str[0]);
+			return "Unknown";
+		}
+	}
+
+	int toInt(void) const {
+		return str[0];
+	}
+
+	SystemAudioStatus (const CECFrame &frame, size_t startPos) : CECBytes (frame, startPos, MAX_LEN) {
+	};
+
+protected:
+	size_t getMaxLen() const {return MAX_LEN;}
+};
 class UICommand : public CECBytes
 {
 public:

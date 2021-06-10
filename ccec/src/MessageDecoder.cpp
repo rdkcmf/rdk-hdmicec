@@ -162,6 +162,9 @@ void MessageDecoder::decode(const CECFrame &in_)
 	case SYSTEM_AUDIO_MODE_REQUEST:
              processor.process(SystemAudioModeRequest(in), header);
              break;
+        case SET_SYSTEM_AUDIO_MODE:
+             processor.process(SetSystemAudioMode(in), header);
+             break;
 	default:
         CCEC_LOG( LOG_DEBUG, "Unhandled Message Received \n");
         OpCode(in_, OPCODE_OFFSET).print();
