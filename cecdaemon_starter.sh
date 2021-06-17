@@ -29,14 +29,28 @@ if [ ! -f /lib/rdk/getRFC.sh ]; then
     exit 0
 fi
 
-_enableHDMICECDaemon=`tr181Set Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.HDMICECDaemon.Enable 2>&1 > /dev/null`
-if [ ! -z "$_enableHDMICECDaemon" ]; then
-    if [[ $_enableHDMICECDaemon == "true" ]]; then
-        touch /tmp/cecdaemon-enabled
-        echo "RFC HDMICECDaemon.Enabled is set to true"
+exp_retry=0
+while true; do
+    _enableHDMICECDaemon=`tr181Set Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.HDMICECDaemon.Enable 2>&1 > /dev/null`
+    if [ ! -z "$_enableHDMICECDaemon" ]; then
+        if [[ $_enableHDMICECDaemon == "true" ]]; then
+            touch /tmp/cecdaemon-enabled
+                if [ "x${INIT_SYSTEM}" = "xs6" ] ; then
+                    s6-ftrig-notify /tmp/.pathfifo path-cecdaemon-enabled
+                fi
+            echo "RFC HDMICECDaemon.Enabled is set to true"
+            break;
+        else
+            echo "RFC HDMICECDaemon.Enabled is set to false"
+            break;
+        fi
     else
-        echo "RFC HDMICECDaemon.Enabled is set to false"
+        if [ "$exp_retry" -ge 30 ]; then
+            echo "RFC HDMICECDaemon is not set. Hence by default, feature is disabled.";
+            break;
+        fi
+        echo "RFC HDMICECDaemon is not set. Tring again.."
+        sleep 2
     fi
-else
-    echo "RFC HDMICECDaemon is not set. Hence by default, feature is disabled"
-fi
+    exp_retry=`expr $exp_retry + 1`
+done
