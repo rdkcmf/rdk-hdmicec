@@ -605,6 +605,26 @@ public:
 	SystemAudioStatus status;
 };
 
+class GiveAudioStatus : public DataBlock
+{
+public:
+    Op_t opCode(void) const {return GIVE_AUDIO_STATUS;}
+};
+class ReportAudioStatus: public DataBlock
+{
+public:
+    Op_t opCode(void) const {return REPORT_AUDIO_STATUS;}
+
+    ReportAudioStatus( const AudioStatus &status ) : status(status) { }
+    ReportAudioStatus(const CECFrame &frame, int startPos = 0):status(frame, startPos)
+    {
+    }
+    CECFrame &serialize(CECFrame &frame) const {
+	return status.serialize(frame);
+    }
+    AudioStatus status;
+};
+
 class UserControlPressed: public DataBlock
 {
 public:

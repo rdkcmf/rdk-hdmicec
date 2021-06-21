@@ -815,6 +815,49 @@ public:
 protected:
 	size_t getMaxLen() const {return MAX_LEN;}
 };
+class AudioStatus : public CECBytes
+{
+   public:
+   enum {
+        MAX_LEN = 1,
+   };
+
+   enum {
+          AUDIO_MUTE_OFF = 0x00,
+          AUDIO_MUTE_ON  = 0x01,
+        };
+	AudioStatus(uint8_t status) : CECBytes((uint8_t)status) { };
+
+	bool validate(void) const {
+		return (((str[0] & 0x80) >> 7) <= AUDIO_MUTE_ON) ;
+	}
+	const std::string toString(void) const
+	{
+		static const char *names_[] = {
+			"Audio Mute Off",
+			"Audio Mute On",
+		};
+		if (validate())
+		{
+			return names_[((str[0] & 0x80) >> 7)];
+		}
+		else
+		{
+			CCEC_LOG(LOG_WARN,"Unknown Audio Mute Status:%x\n", str[0]);
+			return "Unknown";
+		}
+	}
+	int getAudioMuteStatus(void) const {
+            return ((str[0] & 0x80) >> 7);
+           };
+	int getAudioVolume(void) const {
+		return (str[0] & 0x7F);
+        }
+	AudioStatus ( const CECFrame &frame, size_t startPos) : CECBytes (frame, startPos, MAX_LEN) {
+	};
+protected:
+	size_t getMaxLen() const {return MAX_LEN;}
+};
 class UICommand : public CECBytes
 {
 public:
@@ -823,9 +866,14 @@ public:
     };
 
     enum {
-		UI_COMMAND_POWER_OFF_FUNCTION = 0x6C,
-        UI_COMMAND_POWER_ON_FUNCTION = 0x6D,
-    };
+           UI_COMMAND_VOLUME_UP          = 0x41,
+           UI_COMMAND_VOLUME_DOWN        = 0x42,
+           UI_COMMAND_MUTE               = 0x43,
+           UI_COMMAND_MUTE_FUNCTION      = 0x65,
+           UI_COMMAND_RESTORE_FUNCTION   = 0x66,
+           UI_COMMAND_POWER_OFF_FUNCTION = 0x6C,
+           UI_COMMAND_POWER_ON_FUNCTION  = 0x6D,
+        };
 
     UICommand(int command) : CECBytes((uint8_t)command) { };
 

@@ -209,7 +209,7 @@ const char *GetOpName(Op_t op)
 		name = "Give System Audio Mode Status";
 		break;
 	case REPORT_AUDIO_STATUS:
-		name = "Report Name Status";
+		name = "Report Audio Status";
 		break;
 	case REQUEST_SHORT_AUDIO_DESCRIPTOR:
 		name = "Request Short Audio Descriptor";
