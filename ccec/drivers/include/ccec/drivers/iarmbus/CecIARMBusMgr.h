@@ -45,6 +45,7 @@ extern "C"
 #define IARM_BUS_CECMGR_API_GetLogicalAddress        "GetLogicalAddress"
 #define IARM_BUS_CECMGR_API_AddLogicalAddress        "AddLogicalAddress"
 #define IARM_BUS_CECMGR_API_GetPhysicalAddress       "GetPhysicalAddress"
+#define IARM_BUS_CECMGR_API_isAvailable "isAvailable"
 
 /*! Events published from IR Mananger */
 typedef enum _CECMgr_EventId_t {

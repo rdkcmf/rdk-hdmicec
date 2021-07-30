@@ -77,6 +77,7 @@ static IARM_Result_t _GetLogicalAddress(void *arg);
 static IARM_Result_t _AddLogicalAddress(void *arg);
 static IARM_Result_t _GetPhysicalAddress(void *arg);
 static IARM_Result_t _Enable(void *arg);
+static IARM_Result_t _IsAvailable(void *arg);
 
 static void _iarmMgrHdmiEventHandler(const char *owner, IARM_EventId_t eventId, void *data, size_t len);
 
@@ -259,6 +260,7 @@ IARM_Result_t CECIARMMgr::init(void)
     IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_ENABLE, cecMgrEventHandler);
     IARM_Bus_RegisterEventHandler(IARM_BUS_CECMGR_NAME, IARM_BUS_CECMGR_EVENT_SEND, cecSendEventHandler);
     IARM_Bus_RegisterEventHandler(IARM_BUS_DSMGR_NAME,IARM_BUS_DSMGR_EVENT_HDMI_HOTPLUG, _iarmMgrHdmiEventHandler);
+    IARM_Bus_RegisterCall(IARM_BUS_CECMGR_API_isAvailable, _IsAvailable);
 
     IARM_Bus_CECMgr_EventData_t initData;
     memset(&initData, 0, sizeof(initData));
@@ -525,6 +527,11 @@ static IARM_Result_t _Enable(void *arg)
 	return retCode;
 }
 
+IARM_Result_t _IsAvailable(void *arg)
+{
+    CCEC_LOG( LOG_ERROR, "[%s:%d] IARM_BUS_CECMGR_API_isAvailable is called",__FUNCTION__,__LINE__ );
+    return IARM_RESULT_SUCCESS;
+}
 
 CCEC_END_NAMESPACE
 
