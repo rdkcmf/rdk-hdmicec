@@ -873,6 +873,23 @@ public:
            UI_COMMAND_RESTORE_FUNCTION   = 0x66,
            UI_COMMAND_POWER_OFF_FUNCTION = 0x6C,
            UI_COMMAND_POWER_ON_FUNCTION  = 0x6D,
+	   UI_COMMAND_UP                 = 0x01,
+	   UI_COMMAND_DOWN               = 0x02,
+	   UI_COMMAND_LEFT               = 0x03,
+	   UI_COMMAND_RIGHT              = 0x04,
+	   UI_COMMAND_SELECT             = 0x00,
+	   UI_COMMAND_HOME               = 0x09,
+	   UI_COMMAND_BACK               = 0x0D,
+	   UI_COMMAND_NUM_0              = 0x20,
+	   UI_COMMAND_NUM_1              = 0x21,
+	   UI_COMMAND_NUM_2              = 0x22,
+	   UI_COMMAND_NUM_3              = 0x23,
+	   UI_COMMAND_NUM_4              = 0x24,
+	   UI_COMMAND_NUM_5              = 0x25,
+	   UI_COMMAND_NUM_6              = 0x26,
+	   UI_COMMAND_NUM_7              = 0x27,
+	   UI_COMMAND_NUM_8              = 0x28,
+	   UI_COMMAND_NUM_9              = 0x29,
         };
 
     UICommand(int command) : CECBytes((uint8_t)command) { };
