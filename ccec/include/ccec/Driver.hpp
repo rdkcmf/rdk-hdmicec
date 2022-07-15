@@ -59,6 +59,7 @@ public:
 	virtual void  close(void) throw(InvalidStateException, IOException)= 0;
 	virtual void  read(CECFrame &frame)  throw(InvalidStateException, IOException) = 0;
 	virtual void  write(const CECFrame &frame) throw(InvalidStateException, IOException, CECNoAckException) = 0;
+	virtual void  writeAsync(const CECFrame &frame) throw(InvalidStateException, IOException, CECNoAckException) = 0;
 	virtual void  removeLogicalAddress(const LogicalAddress &source)  = 0;
 	virtual bool  addLogicalAddress   (const LogicalAddress &source) = 0;
 //	virtual void  getLogicalAddress(int devType, int *logicalAddress) = 0;

@@ -49,6 +49,7 @@ class DriverImpl : public Driver
 {
 public:
 	static void DriverReceiveCallback(int handle, void *callbackData, unsigned char *buf, int len);
+	static void DriverTransmitCallback(int handle, void *callbackData, int result);
 	typedef EventQueue<CECFrame *> IncomingQueue;
 
 	enum {
@@ -63,6 +64,7 @@ public:
 	virtual void  close(void) throw(InvalidStateException, IOException);
 	virtual void  read(CECFrame &frame)  throw(InvalidStateException, IOException);
 	virtual void  write(const CECFrame &frame) throw(InvalidStateException, IOException, CECNoAckException);
+	virtual void  writeAsync(const CECFrame &frame) throw(InvalidStateException, IOException, CECNoAckException);
 	virtual void  removeLogicalAddress(const LogicalAddress &source);
 	virtual bool  addLogicalAddress   (const LogicalAddress &source);
 	virtual int   getLogicalAddress(int devType);

@@ -75,6 +75,13 @@ void DriverImpl::DriverReceiveCallback(int handle, void *callbackData, unsigned 
 	CCEC_LOG( LOG_DEBUG, "frame offered\r\n");
 }
 
+void DriverImpl::DriverTransmitCallback(int handle, void *callbackData, int result)
+{
+	if (HDMI_CEC_IO_SUCCESS != result) {
+		CCEC_LOG( LOG_DEBUG, "======== HdmiCecSetTxCallback received. Result: %d\r\n", result);
+	}
+}
+
 DriverImpl::DriverImpl() : status(CLOSED), nativeHandle(0)
 {
 	CCEC_LOG( LOG_DEBUG, "Creating DriverImpl done\r\n");
@@ -106,6 +113,7 @@ void DriverImpl::open(void) throw(InvalidStateException, IOException)
 		}
 
 		HdmiCecSetRxCallback(nativeHandle, DriverReceiveCallback, 0);
+		HdmiCecSetTxCallback(nativeHandle, DriverTransmitCallback, 0);
 		status = OPENED;
     }
 }
@@ -172,6 +180,42 @@ void  DriverImpl::read(CECFrame &frame)  throw(InvalidStateException, IOExceptio
 		}
     } while(backToPoll);
 }
+
+/*
+ * Only 1 write is allowed at a time. Queue the write request and wait for response.
+ */
+void  DriverImpl::writeAsync(const CECFrame &frame)  throw(InvalidStateException, IOException, CECNoAckException)
+{
+
+	const uint8_t *buf = NULL;
+	size_t length = 0;
+
+	frame.getBuffer(&buf, &length);
+    {AutoLock lock_(mutex);
+    	if (status != OPENED) {
+    		throw InvalidStateException();
+    	}
+		CCEC_LOG( LOG_DEBUG, "DriverImpl::write to call HdmiCecTxAsync\r\n");
+
+		int err = HdmiCecTxAsync(nativeHandle, buf, length);
+
+		CCEC_LOG( LOG_DEBUG, ">>>>>>> >>>>> >>>> >> >> >\r\n");
+
+		dump_buffer((unsigned char*)buf,length);
+
+		CCEC_LOG(LOG_DEBUG, "==========================\r\n");
+
+		CCEC_LOG( LOG_DEBUG, "DriverImpl:: call HdmiCecTxAsync %x\r\n", err);
+
+		if (err != HDMI_CEC_IO_SUCCESS) {
+			throw IOException();
+		}
+
+    }
+
+    CCEC_LOG( LOG_DEBUG, "Send Async Completed\r\n");
+}
+
 
 /*
  * Only 1 write is allowed at a time. Queue the write request and wait for response.
