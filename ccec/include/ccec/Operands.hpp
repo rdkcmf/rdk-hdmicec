@@ -359,7 +359,7 @@ class PhysicalAddress : public CECBytes
     }
 
 	const uint8_t getByteValue( int index) const {
-		uint8_t val;
+		uint8_t val = 0;
 
 		Assert(index < 4);
 

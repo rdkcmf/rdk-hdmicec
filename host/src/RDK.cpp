@@ -273,10 +273,12 @@ CECHost_Err_t CECHost_SetDeviceStatus(int logicalAddress, CECHost_DeviceStatus_t
 	{
 		if( 0 != strncmp(_deviceStatus[logicalAddress].osdName,(const char *)devices->data.osdName,MAX_LENGTH_OF_OSD_NAME))
 		{
-			strncpy(_deviceStatus[logicalAddress].osdName,(const char *)devices->data.osdName,MAX_LENGTH_OF_OSD_NAME);
+                        memset(_deviceStatus[logicalAddress].osdName,'\0',MAX_LENGTH_OF_OSD_NAME);
+                        strncpy(_deviceStatus[logicalAddress].osdName,(const char *)devices->data.osdName,MAX_LENGTH_OF_OSD_NAME-1);
 			eventData.logicalAddress = logicalAddress;
 			eventData.changedStatus = IARM_BUS_CECHost_OSD_NAME;
-			strncpy(eventData.data.osdName,(const char *)devices->data.osdName,MAX_LENGTH_OF_OSD_NAME);
+			memset(eventData.data.osdName,'\0',MAX_LENGTH_OF_OSD_NAME);
+                        strncpy(eventData.data.osdName,(const char *)devices->data.osdName,MAX_LENGTH_OF_OSD_NAME-1);
 			CCEC_LOG( LOG_DEBUG, "RDKHost BroadcastingChangedOsdNameStatus on Iarm Bus \n");
 			ret = IARM_Bus_BroadcastEvent(IARM_BUS_CECHOST_NAME,(IARM_EventId_t)IARM_BUS_CECHost_EVENT_DEVICESTATUSCHANGE,(void *)&eventData,sizeof(eventData));
 		}
